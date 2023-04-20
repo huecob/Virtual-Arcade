@@ -63,13 +63,31 @@ def create_user():
 
     return redirect('/')
 
-@app.route('/player-profile')
-def show_profile():
+@app.route('/player-profile/<user_id>')
+def show_profile(user_id):
 
-    user = crud.get
+    user = crud.get_users_by_id(user_id)
 
-    return render_template('player-profile.html')
+    return render_template('player-profile.html', user=user)
 
+@app.route('/update-display-name/<user_id>')
+def update_name(user_id):
+
+    # user = crud.get_users_by_id(user_id) #this is the user obj
+    all_users = crud.get_users() #all the users
+    
+    for user in all_users:
+        all_display_names = user.user_display_name
+
+    return 
+
+    #pass into JS 
+
+@app.route('/game-1')
+def play_game():
+    """This will be where your game will live"""
+
+    return render_template('game-page.html')
 
 
 

@@ -40,7 +40,7 @@
 {% if 'email' in session %}
 <div>
   Your Account: <br>
-  <a href="player-profile.html">{{ user.user_display_name }}'s Profile</a>
+  <a href="/player-profile/{{ user.user_id }}">{{ user.user_display_name }}'s Profile</a>
   </div>
 {% endif %}
 <br>

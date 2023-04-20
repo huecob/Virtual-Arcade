@@ -6,12 +6,15 @@
         <title>
             {% block title %}{% endblock %}
         </title>
+        {% block kaboomcdn %}{% endblock %}
 
         {% block head %}{% endblock %}
     </head>
-    <bod>
+    <body>
+        {% block game1 %}{% endblock %}
+        {% block profile %}{% endblock %}
         {% block body %}{% endblock %}
         {% block registration %}{% endblock %}
         {% block after_body %}{% endblock %}
-    </bod>
+    </body>
 </html>
