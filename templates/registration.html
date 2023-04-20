@@ -2,6 +2,16 @@
 
 {% block registration %}
 
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+  <div class = 'flashes'>
+    {% for message in messages %}
+    {{message}}
+    {% endfor %}
+  </div>
+    {% endif %}
+    {% endwith %}
+
 <h2>Sign up here:</h2>
 <form action="/register-user" method="POST">
   <p>

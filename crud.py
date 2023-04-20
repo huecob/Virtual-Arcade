@@ -1,6 +1,7 @@
 """CRUD Operations"""
 
 from model import db, User, GameSession, Game, connect_to_db
+import json
 
 def create_user(email, password, user_display_name):
     """Creates new users"""
@@ -33,6 +34,17 @@ def get_users_by_id(user_id):
 def get_user_by_email(email):
 
     return User.query.filter(User.user_email == email).first()
+
+# language filter
+def check_bad_word(word): 
+    """Language check"""
+
+    f = open('lang.json')
+    data = json.load(f)
+    if word in data["words"]:
+        return True
+    else:
+        return False
 
 if __name__ == "__main__":
     from server import app

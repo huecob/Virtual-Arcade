@@ -3,12 +3,14 @@
 from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect)
 from model import connect_to_db, db
 import crud
+import json
 
 from jinja2 import StrictUndefined
 
 app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
+
 
 
 @app.route('/')
@@ -52,16 +54,23 @@ def create_user():
     password = request.form.get("password")
     display_name = request.form.get("display name")
 
-    if not crud.get_user_by_email(email):
-        flash("Saddle up, Player!")
-        user = crud.create_user(email,password, display_name)
+    if crud.check_bad_word(display_name) == False:
+        if not crud.get_user_by_email(email):
+         flash("Saddle up, Player!")
+         user = crud.create_user(email,password, display_name)
         db.session.add(user)
         db.session.commit()
 
-    else:
+        return redirect('/')
+
+    elif crud.check_bad_word(display_name) == True:
+        flash("Please keep the language clean.")
+    
+    elif crud.get_user_by_email(email):
         flash("Multiverse Error: There's someone else with the email. 🤪")
 
-    return redirect('/')
+    return redirect('/registration')
+    
 
 @app.route('/player-profile/<user_id>')
 def show_profile(user_id):
@@ -70,7 +79,7 @@ def show_profile(user_id):
 
     return render_template('player-profile.html', user=user)
 
-@app.route('/update-display-name/<user_id>')
+@app.route('/update-display-name/')
 def update_name(user_id):
 
     # user = crud.get_users_by_id(user_id) #this is the user obj
@@ -79,7 +88,7 @@ def update_name(user_id):
     for user in all_users:
         all_display_names = user.user_display_name
 
-    return 
+    return all_users, all_display_names
 
     #pass into JS 
 
