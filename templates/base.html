@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=""utf-8">
+        <meta name=""viewport" content="width=device-width">
+        <title>
+            {% block title %}{% endblock %}
+        </title>
+
+        {% block head %}{% endblock %}
+    </head>
+    <bod>
+        {% block body %}{% endblock %}
+        {% block registration %}{% endblock %}
+        {% block after_body %}{% endblock %}
+    </bod>
+</html>
