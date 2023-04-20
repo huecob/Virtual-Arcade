@@ -15,7 +15,11 @@ app.jinja_env.undefined = StrictUndefined
 def show_homepage():
     """Landing page"""
 
-    return render_template('homepage.html')
+    if 'email' not in session:
+        return render_template('homepage.html')
+    else:
+        user = crud.get_user_by_email(session['email'])
+        return render_template('homepage.html',user=user)
 
 @app.route('/login', methods=["POST"])
 def login_user():
@@ -26,11 +30,11 @@ def login_user():
 
     user = crud.get_user_by_email(email)
 
-    if user.email != email or user.password != password:
-        flash("sorry yo! something's up with your login info. :P")
+    if user.user_email != email or user.user_password != password:
+        flash("Sorry yo! something's up with your login info. :P")
     else:
-        flash("welcome back friend!")
-        session['email'] = user.email
+        flash("Welcome back friend!")
+        session['email'] = user.user_email
     
     return redirect('/')
 
@@ -57,8 +61,15 @@ def create_user():
     else:
         flash("Multiverse Error: There's someone else with the email. 🤪")
 
-
     return redirect('/')
+
+@app.route('/player-profile')
+def show_profile():
+
+    user = crud.get
+
+    return render_template('player-profile.html')
+
 
 
 

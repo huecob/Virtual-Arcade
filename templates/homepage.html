@@ -6,20 +6,20 @@
 
 {% with messages = get_flashed_messages() %}
   {% if messages %}
-  <ul class = 'flashes'>
+  <div class = 'flashes'>
     {% for message in messages %}
-    <li>{{message}}</li>
+    {{message}}
     {% endfor %}
-    </ul>
+  </div>
     {% endif %}
     {% endwith %}
-{% if 'email' in session %}
+  
+{% if 'email' not in session %}
 <h2>Please Log In</h2>
 <form action="/login" method="POST">
   <p>
     Email <input type="text" name="email">
   </p>
-
   <p>
     Password <input type="password" name="password">
   </p>
@@ -29,7 +29,21 @@
   </p>
 </form>
 <br>
+<div>
+  Your Account: <br>
+  <a href="/registration">Profile</a>
+</div>
+<br>
+<div>
 {% endif %}
+
+{% if 'email' in session %}
+<div>
+  Your Account: <br>
+  <a href="player-profile.html">{{ user.user_display_name }}'s Profile</a>
+  </div>
+{% endif %}
+<br>
 <div>
   New here? 
   <a href="/registration">Create an account</a>
