@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block kaboomcdn %}
+<script type="module">
+    import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
+
+kaboom()
+
+loadSprite("snailman", "http://localhost:8000/snailman.png");
+
+add([
+    sprite("snailman"),
+    pos(80, 40),
+    scale(0.5),
+]);
+</script>
+{% endblock  %}
+
+
+{% block game1 %}
+
+{% endblock %}
