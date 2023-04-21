@@ -64,7 +64,7 @@ def create_user():
         return redirect('/')
 
     elif crud.check_bad_word(display_name) == True:
-        flash("Please keep the language clean.")
+        flash("Please keep the language clean!!")
     
     elif crud.get_user_by_email(email):
         flash("Multiverse Error: There's someone else with the email. 🤪")
@@ -74,6 +74,7 @@ def create_user():
 
 @app.route('/player-profile/<user_id>')
 def show_profile(user_id):
+    """Loads Player Profile"""
 
     user = crud.get_users_by_id(user_id)
 
@@ -81,6 +82,7 @@ def show_profile(user_id):
 
 @app.route('/update-display-name/')
 def update_name(user_id):
+    """Updates display name"""
 
     # user = crud.get_users_by_id(user_id) #this is the user obj
     all_users = crud.get_users() #all the users

@@ -1,19 +1,19 @@
 {% extends 'base.html' %}
 
 {% block kaboomcdn %}
-<script type="module">
-    import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
+<script type="module">import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
 
 kaboom()
 
-loadSprite("snailman", "http://localhost:8000/snailman.png");
+loadSprite('alien','/static/sprites/alien.png')
 
+// add something to screen
 add([
-    sprite("snailman"),
+    sprite("alien"),
     pos(80, 40),
-    scale(0.5),
-]);
+])
 </script>
+
 {% endblock  %}
 
 
