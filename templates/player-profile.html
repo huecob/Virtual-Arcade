@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
 {% block profile %}
-<script src="display-name-update.js"></script>
+
 <h1>{{ user.user_display_name }}'s Profile!</h1>
 <br>
 Update Display Name: 
-<form action="/update-display-name/{{ user.user_id}}">
-<input type="text" class="desired_name"></input>
-<button class='update-display-name' id={{ user.user_id }}>Update</button>
+<form action="/update-display-name/{{ user.user_id }}" method="POST">
+    <input type="text" class="desired-name"></input>
+    <button class="update-display-name" id="{{ user.user_id }}">Update</button>
 </form>
+
+<script src="display-name-update.js"></script>
 {% endblock %}

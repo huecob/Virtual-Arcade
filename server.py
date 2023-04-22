@@ -1,6 +1,6 @@
 """Main Server!! Woohoo!"""
 
-from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect)
+from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect,jsonify)
 from model import connect_to_db, db
 import crud
 import json
@@ -80,26 +80,26 @@ def show_profile(user_id):
 
     return render_template('player-profile.html', user=user)
 
-@app.route('/update-display-name/')
+@app.route('/update-display-name/<user_id>', methods=['POST'])
 def update_name(user_id):
     """Updates display name"""
 
-    # user = crud.get_users_by_id(user_id) #this is the user obj
-    all_users = crud.get_users() #all the users
+    user = crud.get_users_by_id(user_id)
+    new_name = request.json.get['newName']
+
+    # error: user.user_id = 'display-name-update.js'
     
-    for user in all_users:
-        all_display_names = user.user_display_name
+    crud.update_display_name(user.user_id, new_name)
 
-    return all_users, all_display_names
 
-    #pass into JS 
+    return jsonify({'success': True})
+
 
 @app.route('/game-1')
 def play_game():
     """This will be where your game will live"""
 
     return render_template('game-page.html')
-
 
 
 if __name__ == "__main__":

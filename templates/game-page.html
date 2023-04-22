@@ -1,22 +1,103 @@
 {% extends 'base.html' %}
 
 {% block kaboomcdn %}
-<script type="module">import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
 
+<script type="module">
+
+    // import kaboom lib
+    import kaboom from "https://unpkg.com/kaboom/dist/kaboom.mjs";
+    
+    // initialize kaboom context
 kaboom()
+    
+loadSprite('badBoys', 'static/sprites/BadBoys.png');
+loadSprite('hero', 'static/sprites/Hero.png');
+loadSprite('friend', 'static/sprites/Friend.png');
 
-loadSprite('alien','/static/sprites/alien.png')
+loadSprite('landing site', 'static/sprites/BG1.png')
 
-// add something to screen
-add([
-    sprite("alien"),
-    pos(80, 40),
+const SPEED = 200
+
+const ui = add([
+    fixed(),
+    z(-1),
 ])
+
+// this loads your background.
+ui.add([
+    sprite('landing site'),
+    scale(2),
+    pos(0, -100)
+])
+
+// add things to the screen + where
+// be specific about the things, like size, does it need to account for gravity? 
+const badBoys = add([
+    sprite("badBoys"),
+    pos(80, 225),
+    scale(0.7),
+    area(),
+    "enemy",
+])
+
+
+
+const hero = add([
+    sprite("hero"),
+    pos(center()),
+    scale(0.15),
+    color(),
+    rotate(0),
+    area(),
+    body(),
+])
+
+// const level = addLevel([
+// ], {
+
+// }
+// ])
+
+
+//functional controls for your player 'hero'
+
+onKeyDown("left", () => {
+    hero.move(-SPEED, 0)
+})
+
+onKeyDown("right", () => {
+    hero.move(SPEED, 0)
+})
+
+onKeyDown("up", () => {
+    hero.move(0, -SPEED)
+})
+
+onKeyDown("down", () => {
+    hero.move(0, SPEED)
+})
+
+// This won't seem to work quite yet...
+// onKeyDown("space", () => {
+//     hero.jump();
+// })
+
+hero.onCollide("enemy", (enemy) => {
+    destroy(enemy)
+})
+
+hero.onCollideUpdate("enemy", () =>{
+})
+
 </script>
 
 {% endblock  %}
 
 
 {% block game1 %}
+
+<canvas id="game">
+<script src="'game.js"></script>
+</canvas>
 
 {% endblock %}

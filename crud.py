@@ -39,6 +39,21 @@ def get_user_by_email(email):
 
     return User.query.filter(User.user_email == email).first()
 
+def update_display_name(user_id, new_name):
+    """Update display name"""
+
+    if check_bad_word(new_name) == True:
+        raise ValueError("Don't even think about it!")
+
+    user = User.query.get(user_id)
+
+    if user is not None:
+        user.user_display_name = new_name
+
+        db.session.commit()
+
+    # you need to apply your language filter here as well.
+
 def check_bad_word(word): 
     """Language check"""
 
