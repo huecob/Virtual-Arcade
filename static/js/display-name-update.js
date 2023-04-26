@@ -1,29 +1,30 @@
+const updateButton = document.querySelector('.update-display-name');
+console.log(updateButton);
 
-// Update Display Name AJAX Call
-updateButton = document.querySelector('form');
-profileID = document.querySelector('.update-display-name');
 
-updateButton.addEventListener('submit', (evt) => {
+updateButton.addEventListener('click', (evt) => {
     evt.preventDefault();
+    console.log("This worked")
 
+    const newName = prompt('What should we call you?');
     const formInputs = {
-    newName: document.querySelector('.desired_name').value,
-    }
+        updated_name: newName,
+        user_id: updateButton.id,
+    };
 
-    fetch(`/update-display-name/${profileID}`, {
+    fetch('/update-display-name', {
         method: 'POST',
         body: JSON.stringify(formInputs),
         headers: {
-            'Content-Type': 'application/json'
-          }
-    })
+            'Content-Type': 'application/json',
+    },
+})
     .then((response) => response.json())
-    .then((serverData)=> {
-        if (serverData.success) {
-            alert("Success!");
+    .then((responseJson) => {
+        // alert(responseJson.status);
+        // console.log(responseJson)
+        if (responseJson["code"] == "Success") {
+            document.querySelector('#new-name').innerHTML = responseJson['name'];
         }
     });
 });
-    // we want to check if newName exists in our DB.
-    // if it does NOT, replace crud...user_display_name
-    // if it does exist, let the user know that's not a thing

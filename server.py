@@ -12,7 +12,6 @@ app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
 
 
-
 @app.route('/')
 def show_homepage():
     """Landing page"""
@@ -37,6 +36,7 @@ def login_user():
     else:
         flash("Welcome back friend!")
         session['email'] = user.user_email
+        session['user_id'] = user.user_id
     
     return redirect('/')
 
@@ -61,6 +61,8 @@ def create_user():
         db.session.add(user)
         db.session.commit()
 
+        # you need to add in session key value
+
         return redirect('/')
 
     elif crud.check_bad_word(display_name) == True:
@@ -80,19 +82,19 @@ def show_profile(user_id):
 
     return render_template('player-profile.html', user=user)
 
-@app.route('/update-display-name/<user_id>', methods=['POST'])
-def update_name(user_id):
+@app.route('/update-display-name', methods=['POST'])
+def update_name():
     """Updates display name"""
 
-    user = crud.get_users_by_id(user_id)
-    new_name = request.json.get['newName']
+    user_id = request.json['user_id']
+    user_id = int(user_id)
 
-    # error: user.user_id = 'display-name-update.js'
-    
-    crud.update_display_name(user.user_id, new_name)
+    newName = request.json['updated_name']
 
+    crud.update_display_name(user_id, newName)
 
-    return jsonify({'success': True})
+    return jsonify({"code": "Success",
+                    "name": newName})
 
 
 @app.route('/game-1')

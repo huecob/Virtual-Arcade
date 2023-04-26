@@ -1,29 +1,103 @@
-import kaboom from kaboom
+    //set up kaboom window
+    kaboom({
+        background: [134, 135, 247],
+        width: 320,
+        height: 240,
+        scale: 2,
+    });
 
-kaboom();
+    //load sprites
+    loadRoot("/static/sprites/");
+    loadSprite("hero", 'Hero.png');
+    loadSprite("badGuys", 'BadBoys.png');
+    loadSprite("food", 'strawberry.png');
+    loadSprite("block", 'WoodCube.png');
+    loadSprite("friend", "Friend.png");
+    loadSprite("landing site", "BG1.png");
 
-// loadSprite('badBoys', 'static/sprites/BadBoys.png');
-loadSprite('hero', 'static/sprites/Hero.png');
-loadSprite('friend', 'static/sprites/Friend.png');
+    //Create levels
+
+    const LEVELS = [
+    "                                                                                    ",
+    "                                                                                    ",
+    "                       #                                                    ^       ",
+    "             ============================================         ================= ",
+    "      #                                              ================               ",
+    "     ===========                                                                    ",
+    "                  ==                                                                ",
+    "                                      #                                             ",
+    "                       ===========================                                  ",
+    "                                                                          $         ",
+    "==========                                                   =======================",
+    "                                                                                    ",
+    "          =============                                                             ",
+    "                                   ===================                              ",
+    "                                                                                    ",
+    "      @        ==                            #                                      ",
+    "====================================================================================",
+];
 
 
-// add things to the screen + where
-// be specific about the things, like size, does it need to account for gravity? 
 
+const levelConf = {
+    width: 16,
+    height: 16,
+    pos: vec2(center()),
 
-const hero = add([
-    sprite("hero"),
-    pos(500, 465),
-    scale(0.15),
-    area(),
-    body(),
-])
+    "=": () => [sprite("block"), area(), solid(), "ground"],
+    "@": () => [sprite("hero"), area(), solid(), "hero"],
+    "#": () => [sprite("badGuys"), area(), solid(), "badGuys"],
+    "^": () => [sprite("friend"), area(), solid(), "friend"],
+    "$": () => [sprite("food"), area(), solid(), "food"],
+};
 
+//create a scene
 
-//add some control layers by setting variables to our sprite rendering functions
+scene("start", () => {
+    add([
+        text("Begin Game? :)", {size: 24}),
+        pos(vec2(265,200)),
+        color(255,255,255),
+    ]);
 
-onKeyPress("space", () => {
-    if (hero.isGrounded()) {
-    hero.jump();
-    }
+    //this additional text for the title was not being added in
+    // add([
+    //     text("Artificual Dunderhead", {size: 40}),
+    //     pos(vec2(265, -150)),
+    //     color(255,255,255),
+    // ]);
+
+    onKeyRelease("enter", () => {
+        go("game");
+    });
 });
+
+go("start");
+
+//main game portion
+
+scene("game", (levelNumber = 0) => {
+
+    layers([
+        "bg",
+        "game",
+        "ui",
+    ], "game")
+
+    const level = addLevel(LEVELS[levelNumber], levelConf);
+
+    add([sprite("landing site"), pos(center()), layer("bg"), stretch()]);
+
+    add([
+        text("Level " + (levelNumber +1), {size: 24}),
+        pos(vec2(160,120)),
+        color(255,255,255),
+        origin("center"),
+        layerName("ui"),
+        lifespan(1, { fade: 0.5 }),
+    ]);
+
+    const player = level.spawn("p", 1, 10);
+});
+
+
