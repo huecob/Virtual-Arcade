@@ -32,7 +32,7 @@ def login_user():
     user = crud.get_user_by_email(email)
 
     if user.user_email != email or user.user_password != password:
-        flash("Sorry yo! something's up with your login info. :P")
+        flash("Sorry yo! Something's up with your login info. :P")
     else:
         flash("Welcome back friend!")
         session['email'] = user.user_email
@@ -102,6 +102,17 @@ def play_game():
     """This will be where your game will live"""
 
     return render_template('game-page.html')
+
+@app.route('/logout')
+def logout_user():
+    """handles the logout"""
+
+    session.pop('email', None)
+    session.pop('user_id', None)
+
+    flash("Thanks for playing!")
+
+    return redirect('/')
 
 
 if __name__ == "__main__":
