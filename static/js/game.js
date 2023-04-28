@@ -1,13 +1,15 @@
 kaboom();
 
 loadSprite("hero", 'static/sprites/hero.png');
-loadSprite("badGuys", 'static/sprites/badguys.png');
+loadSprite("badguys", 'static/sprites/badguys.png');
 loadSprite("food", 'static/sprites/strawberry.png');
 loadSprite("block", 'static/sprites/block.png');
 loadSprite("friend", 'static/sprites/friend.png');
 loadSprite("bg", "static/sprites/bg.png");
+loadSprite('snailman', "static/sprites/snailman.png")
 
 loadSound("shoot", 'static/sounds/shoot.wav');
+loadSound("explosion", 'static/sounds/explosion.wav')
 
 scene("game", () => {
 
@@ -16,20 +18,19 @@ scene("game", () => {
 	add([
 		sprite("bg"),
 		layer("bg"),
-		pos(0,-600),
+		pos(0,-300),
 		scale(2)
 	]);
 
-	
 
     addLevel([
 		"                                    ",
 		"                                    ",
 		"                                    ",
-		"     @    ^                         ",
+		"     @                              ",
 		"    ================                ",
 		"                                    ",
-		"                        ==          ",
+		"                      ==            ",
 		"                                    ",
 		"       ===============              ",
 		"$                               *   ",
@@ -37,8 +38,8 @@ scene("game", () => {
 		"                                    ",
 		"                                    ",
 		"         ===================        ",
-		"                                     ",
-		"               ==         #         ",
+		"                                    ",
+		"               ==               #   ",
 		"====================================",
 	], {
 		width: 53,
@@ -106,7 +107,6 @@ onKeyRelease("right", () => {
 	player.angle = 0;
 });
 
-let jumpCount = 0;
 
 let canJump = true;
 let canDoubleJump = true;
@@ -156,6 +156,52 @@ onKeyPress("space", () => {
 onCollide("bullet", "platform", (bullet) => {
 	destroy(bullet)
 });
+
+//let's make some enemies (:
+
+const ALIEN__BASE_SPEED = 100;
+const ALIEN_SPEED_INC = 20;
+
+function spawnAlien() {
+  let alienDirection = choose([directions.LEFT, directions.RIGHT]);
+  let xpos = (alienDirection == directions.LEFT ? 0 : 500);
+
+  const points_speed_up = Math.floor(player.score / 1000);
+  const alien_speed = ALIEN__BASE_SPEED + points_speed_up * ALIEN_SPEED_INC;
+  const new_alien_interval = 0.8 - points_speed_up / 20;
+
+  add([
+    sprite("badguys"),
+    pos(100,100),
+    area(),
+    "alien",
+    {
+      speedX:
+        rand(alien_speed * 0.5, alien_speed * 1.5) *
+        (alienDirection == directions.LEFT ? 1 : -1),
+      speedY: rand(alien_speed * 0.1, alien_speed * 0.5) * choose([-1, 1]),
+    },
+  ]);
+
+  wait(new_alien_interval, spawnAlien);
+}
+
+spawnAlien();
+
+onUpdate("alien", (alien) => {
+	alien.move(alien.speedX, alien.speedY);
+});
+
+onCollide("alien", "bullet", (alien, bullet) => {
+	makeExplosion(alien.pos, 5, 5, 5);
+	destroy(alien);
+	destroy(bullet);
+	play("explosion", {
+		volume: 0.2,
+		detune: rand(0, 1200),
+	});
+});
+
 
 });
 go("game");
