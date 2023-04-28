@@ -1,4 +1,8 @@
-kaboom();
+kaboom({
+	height: 600,
+	width: 1000,
+}
+);
 
 loadSprite("hero", 'static/sprites/hero.png');
 loadSprite("badguys", 'static/sprites/badguys.png');
@@ -18,62 +22,85 @@ scene("game", () => {
 	add([
 		sprite("bg"),
 		layer("bg"),
-		pos(0,-300),
-		scale(2)
+		pos(0,-110),
+		scale(1)
 	]);
 
 
-    addLevel([
-		"                                    ",
-		"                                    ",
-		"                                    ",
-		"     @                              ",
-		"    ================                ",
-		"                                    ",
-		"                      ==            ",
-		"                                    ",
-		"       ===============              ",
-		"$                               *   ",
-		"===        =======    ============= ",
-		"                                    ",
-		"                                    ",
-		"         ===================        ",
-		"                                    ",
-		"               ==               #   ",
-		"====================================",
-	], {
-		width: 53,
-		height: 50,
-
-			"=": () => [
-				sprite('block'),
-				area(),
-				scale(0.1),
-				"platform",
-				solid(),
-			],
-			"@": () => [
-				sprite('friend'),
-				area(),
-				pos(0,-60),
-				scale(0.08),
-			],
-			"$": () => [
-				sprite('food'),
-				area(),
-				scale(0.175)
-			],
-		});
+	const MAP_WIDTH = 900;
+	const MAP_HEIGHT = 325;
+	const BLOCK_SIZE = 24;
+	
+	const map = addLevel(
+		[
+		  "--------------------------------------------",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                pppppp    -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-             pppp                         -",
+		  "-                                          -",
+		  "-                                          -",
+		  "-                             pppp         -",
+		  "-                                          -",
+		  "-          pp                              -",
+		  "-                      ppp                 -",
+		  "-                                          -",
+		  "============================================",
+		  "                                            ",
+		],
+	  {
+		width: BLOCK_SIZE,
+		height: BLOCK_SIZE,
+		pos: vec2(0,0),
+		"=": () => [
+		  rect(BLOCK_SIZE, BLOCK_SIZE),
+		  color(150, 75, 0),
+		  "ground",
+		  area(),
+		  solid(),
+		],
+		p: () => [
+		  rect(BLOCK_SIZE, BLOCK_SIZE),
+		  color(0, 0, 255),
+		  "platform",
+		  area(),
+		  solid(),
+		],
+		"-": () => [
+		  rect(BLOCK_SIZE / 10, BLOCK_SIZE),
+		  color(0, 0, 0),
+		  "boundary",
+		  area(),
+		  solid(),
+		],
+	  }
+	);
 
 const player = add([
 	sprite('hero'),
-	pos(110,800),
+	pos(400,400),
 	body(),
 	area(),
-	scale(.045),
+	scale(.09),
 	rotate(0),
 	origin("center"),
-	"player"
+	"player",
+	{
+		shield: 200,
+		score: 200,
+	}
 ]);
 
 //controls for hero, aka tag: "player"
@@ -89,14 +116,14 @@ onKeyDown("left", () => {
 	player.flipX(-1);
 	player.angle = -11;
 	current_direction = directions.LEFT;
-	player.move(-100, 0);
+	player.move(-200, 0);
 });
 
 onKeyDown("right", () => {
 	player.flipX(1);
 	player.angle = 11;
 	current_direction = directions.RIGHT;
-	player.move(100,0);
+	player.move(200,0);
 });
 
 onKeyRelease("left", () => {
@@ -157,44 +184,63 @@ onCollide("bullet", "platform", (bullet) => {
 	destroy(bullet)
 });
 
-//let's make some enemies (:
+//this sets the properties of the enemies (cont. spawning q"newEnemyInterval)
+const enemyBaseSpeed = 100;
+const enemyIncSpeed = 20;
 
-const ALIEN__BASE_SPEED = 100;
-const ALIEN_SPEED_INC = 20;
+function spawnEnemies() {
+	let enemyDirection = choose([directions.LEFT, directions.RIGHT]);
+	let xpos = (enemyDirection == directions.LEFT ? 0 : MAP_WIDTH);
 
-function spawnAlien() {
-  let alienDirection = choose([directions.LEFT, directions.RIGHT]);
-  let xpos = (alienDirection == directions.LEFT ? 0 : 500);
+	const pointsSpeedUp = Math.floor(player.score / 1000);
+	const enemeySpeed = enemyBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
+	const newEnemyInterval = 0.8 - (pointsSpeedUp / 20);
 
-  const points_speed_up = Math.floor(player.score / 1000);
-  const alien_speed = ALIEN__BASE_SPEED + points_speed_up * ALIEN_SPEED_INC;
-  const new_alien_interval = 0.8 - points_speed_up / 20;
+	add([
+		sprite("badguys"),
+		pos(0, rand(0, MAP_HEIGHT -20)),
+		area(),
+		scale(0.5),
+		"enemy",
+		{
+			speedX: rand(enemeySpeed * 0.5, 200 * 1.5) * choose([-1,1]),
+			speedY: rand(enemeySpeed * 0.1, 200 * 0.5) * choose([-1,1])
+		}
+	]);
 
-  add([
-    sprite("badguys"),
-    pos(100,100),
-    area(),
-    "alien",
-    {
-      speedX:
-        rand(alien_speed * 0.5, alien_speed * 1.5) *
-        (alienDirection == directions.LEFT ? 1 : -1),
-      speedY: rand(alien_speed * 0.1, alien_speed * 0.5) * choose([-1, 1]),
-    },
-  ]);
-
-  wait(new_alien_interval, spawnAlien);
+	wait(newEnemyInterval, spawnEnemies);
 }
+spawnEnemies();
 
-spawnAlien();
 
-onUpdate("alien", (alien) => {
-	alien.move(alien.speedX, alien.speedY);
+// this spawns the enemy
+// const enemy = add([
+// 	sprite("badguys"),
+// 	pos(0, rand(0, MAP_HEIGHT -20)),
+// 	area(),
+// 	scale(0.5),
+// 	"enemy",
+// 	{
+// 		speedX: rand(100 * 0.5, 200 * 1.5) * choose([-1,1]),
+// 		speedY: rand(100 * 0.1, 200 * 0.5) * choose([-1,1])
+// 	}
+// ])
+
+//this randomizes the enemy movement but this needs to variable enemy
+onUpdate("enemy", (enemy) => {
+	enemy.move(enemy.speedX, enemy.speedY);
+
+	if ((enemy.pos.y - enemy.height > MAP_HEIGHT) || (enemy.pos.y < 0)) {
+		destroy(enemy);
+	}
+	if ((enemy.pos.x < -1 * enemy.width) || (enemy.pos.x > MAP_WIDTH)) {
+		destroy(enemy);
+	}
 });
 
-onCollide("alien", "bullet", (alien, bullet) => {
-	makeExplosion(alien.pos, 5, 5, 5);
-	destroy(alien);
+onCollide("enemy", "bullet", (enemy, bullet) => {
+	makeExplosion(enemy.pos, 5, 5 ,5);
+	destroy(enemy);
 	destroy(bullet);
 	play("explosion", {
 		volume: 0.2,
@@ -202,6 +248,68 @@ onCollide("alien", "bullet", (alien, bullet) => {
 	});
 });
 
+function makeExplosion(p, n, rad, size) {
+	for (let i =0; i<n; i++) {
+		wait(rand(n * 0.1), () => {
+			for (let i =0; i<2; i++) {
+				add([
+					pos(p.add(rand(vec2(-rad), vec2(rad)))),
+					rect(1,1),
+					color(255,255,255),
+					origin("center"),
+					scale(1 * size, 1 * size),
+					grow(rand(47,72) * size),
+					lifespan(0.1),
+				]);
+			}
+		});
+	}
+}
+
+function lifespan(time) {
+	let timer = 0;
+	return {
+		update() {
+			timer += dt();
+			if (timer >= time) {
+				destroy(this);
+			}
+		}
+	}
+}
+
+function grow(rate) {
+	return {
+		update() {
+			const n = rate * dt();
+			this.scale.x += n;
+			this.scale.y += n;
+		}
+	}
+}
+
+onCollide("enemy", "platform", (enemy, platform) => {
+	makeExplosion(enemy.pos, 5, 3, 3);
+	destroy(enemy);
+	play("explosion", {
+		volume: 0.1,
+		detune: rand(-1200, 1200),
+	})
+});
+
+onCollide("enemy", "ground", (enemy, ground) => {
+	makeExplosion(enemy.pos, 5, 3, 3);
+	destroy(enemy);
+	play("explosion", {
+		volume: 0.1,
+		detune: rand(-1200, 1200),
+	})
+});
+
+//lets make a score board
 
 });
 go("game");
+
+// let's make some enemies (:
+
