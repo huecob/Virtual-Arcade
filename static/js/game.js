@@ -14,6 +14,8 @@ loadSprite('snailman', "static/sprites/snailman.png")
 
 loadSound("shoot", 'static/sounds/shoot.wav');
 loadSound("explosion", 'static/sounds/explosion.wav')
+loadSound("score", '/static/sounds/score.wav')
+loadSound("gameover", '/static/sounds/gameover.wav')
 
 scene("game", () => {
 
@@ -69,6 +71,7 @@ scene("game", () => {
 		  color(150, 75, 0),
 		  "ground",
 		  area(),
+		  scale(1),
 		  solid(),
 		],
 		p: () => [
@@ -76,6 +79,7 @@ scene("game", () => {
 		  color(0, 0, 255),
 		  "platform",
 		  area(),
+		  scale(1),
 		  solid(),
 		],
 		"-": () => [
@@ -198,9 +202,9 @@ function spawnEnemies() {
 
 	add([
 		sprite("badguys"),
-		pos(0, rand(0, MAP_HEIGHT -20)),
+		pos(xpos, rand(0, MAP_HEIGHT -20)),
 		area(),
-		scale(0.5),
+		scale(0.25),
 		"enemy",
 		{
 			speedX: rand(enemeySpeed * 0.5, 200 * 1.5) * choose([-1,1]),
@@ -238,14 +242,28 @@ onUpdate("enemy", (enemy) => {
 	}
 });
 
+onCollide("player", "enemy", (player) => {
+	destroy(player);
+	makeExplosion(player.pos, 5, 3, 3);
+	// play("explosion", {
+	// 	volume: 0.08,
+	// 	detune: rand(-1200, 1200)
+	// })
+	play("gameover", {
+		volume: 0.4,
+		detune: rand(-1200,1200)
+	})
+})
+
 onCollide("enemy", "bullet", (enemy, bullet) => {
 	makeExplosion(enemy.pos, 5, 5 ,5);
 	destroy(enemy);
 	destroy(bullet);
 	play("explosion", {
-		volume: 0.2,
+		volume: 0.1,
 		detune: rand(0, 1200),
 	});
+	updateScore(10);
 });
 
 function makeExplosion(p, n, rad, size) {
@@ -292,7 +310,7 @@ onCollide("enemy", "platform", (enemy, platform) => {
 	makeExplosion(enemy.pos, 5, 3, 3);
 	destroy(enemy);
 	play("explosion", {
-		volume: 0.1,
+		volume: 0.08,
 		detune: rand(-1200, 1200),
 	})
 });
@@ -301,12 +319,59 @@ onCollide("enemy", "ground", (enemy, ground) => {
 	makeExplosion(enemy.pos, 5, 3, 3);
 	destroy(enemy);
 	play("explosion", {
-		volume: 0.1,
+		volume: 0.08,
 		detune: rand(-1200, 1200),
 	})
 });
 
 //lets make a score board
+
+add([
+	text("SCORE: ", { size: 20, font: "sink"}),
+	pos(100, 30),
+	origin("center"),
+]);
+
+const scoreText = add([
+	text("0000000", {size: 20, font: "sink"}),
+	pos(100, 50),
+	origin("center"),
+])
+
+function updateScore(points) {
+	player.score += points;
+	scoreText.text = player.score.toString().padStart(6,0);
+	play("score", {
+		volume: 0.5,
+		detune: rand(-1200,1200)
+	})
+}
+
+add([
+	text("%Hacked: ", { size: 20, font: "sink"}),
+	pos(300, 30),
+	origin("center"),
+])
+
+const hackHealth = add([
+	rect(52, 12),
+	pos(300,50),
+	color(100, 100, 100),
+	origin("center")
+])
+
+const hackHealthHolderInside = add([
+	rect(50,10),
+	pos(250, 10),
+	color(0,0,0),
+	origin("center")
+]);
+
+const hackHealthBar = add([
+	rect(50,10),
+	pos(325, 5),
+	color(0, 255, 0),
+])
 
 });
 go("game");
