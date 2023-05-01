@@ -13,6 +13,8 @@ loadSprite("bg", "static/sprites/bg.png");
 loadSprite('snailman', "static/sprites/snailman.png");
 loadSprite('battery', '/static/sprites/battery.png');
 loadSprite('startscreen', '/static/sprites/startscreen.png')
+loadSprite('healthup', '/static/sprites/healthup.png')
+loadSprite('gameover', '/static/sprites/gameover.jpeg')
 
 loadSound("shoot", 'static/sounds/shoot.wav');
 loadSound("explosion", 'static/sounds/explosion.wav')
@@ -21,101 +23,109 @@ loadSound("gameover", '/static/sounds/gameover.wav')
 loadSound("startgamesound", '/static/sounds/startgamesound.wav')
 loadSound("startmusic", '/static/sounds/startmusic.mp3')
 loadSound("gamemusic", '/static/sounds/gamemusic.mp3')
+loadSound("battery", '/static/sounds/battery.wav')
+loadSound("timeup", '/static/sounds/timeup.wav')
+
+// loadGif('endscreen', '/static/gifs/endscreen.gif')
 
 //start screen
-scene("start", () => {
-	layers(["ui", "bg"], "ui");
+// scene("start", () => {
+// 	layers(["ui", "bg"], "ui");
 
-	add([
-		sprite("startscreen"),
-		layer("ui"),
-		pos(0,0),
-		scale(3.5)
-	]);
+// 	add([
+// 		sprite("startscreen"),
+// 		layer("ui"),
+// 		pos(0,0),
+// 		scale(3.5)
+// 	]);
 
-	add([
-		text("Press enter to start", { size: 24 }),
-		pos(vec2(450, 150)),
-		origin("center"),
-		color(255, 255, 255),
-		layer("ui")
-	]);
+// 	add([
+// 		text("Press enter to start", { size: 24 }),
+// 		pos(vec2(450, 150)),
+// 		origin("center"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	]);
 
-	add([
-	text("Artificial Dunderhead", { size: 50}),
-	pos(vec2(450, 100)),
-	origin("center"),
-	color(255, 255, 255),
-	layer("ui")
-	]);
+// 	add([
+// 	text("Artificial Dunderhead", { size: 50}),
+// 	pos(vec2(450, 100)),
+// 	origin("center"),
+// 	color(255, 255, 255),
+// 	layer("ui")
+// 	]);
 
-	add([
-		text("Controls", { size: 35 }),
-		pos(vec2(30,250)),
-		origin("left"),
-		color(255, 255, 255),
-		layer("ui")
-	]);
+// 	add([
+// 		text("Controls", { size: 35 }),
+// 		pos(vec2(30,250)),
+// 		origin("left"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	]);
 
-	add([
-		rect(300,2 ),
-		pos(vec2(30, 262)),
-		origin("left"),
-		color(255, 255, 255),
-		layer("ui")
-	])
+// 	add([
+// 		rect(300,2 ),
+// 		pos(vec2(30, 262)),
+// 		origin("left"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	])
 
-	add([
-		text("Arrow Keys - move A.D. ", { size: 27 }),
-		pos(vec2(30, 285)),
-		origin("left"),
-		color(255, 255, 255),
-		layer("ui")
-	]);
+// 	add([
+// 		text("Arrow Keys - move A.D. ", { size: 27 }),
+// 		pos(vec2(30, 285)),
+// 		origin("left"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	]);
 
-	add([
-		text("Space Bar - shoot ", { size: 27 }),
-		pos(vec2(30, 305)),
-		origin("left"),
-		color(255, 255, 255),
-		layer("ui")
-	]);
+// 	add([
+// 		text("Space Bar - shoot ", { size: 27 }),
+// 		pos(vec2(30, 305)),
+// 		origin("left"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	]);
 
-	add([
-		text("Up Key - To jump ", { size: 27 }),
-		pos(vec2(30, 325)),
-		origin("left"),
-		color(255, 255, 255),
-		layer("ui")
-	]);
+// 	add([
+// 		text("Up Key - To jump ", { size: 27 }),
+// 		pos(vec2(30, 325)),
+// 		origin("left"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	]);
 
-	add([
-		text("*(A.D can jump twice!) ", { size: 15 }),
-		pos(vec2(30, 345)),
-		origin("left"),
-		color(255, 255, 255),
-		layer("ui")
-	]);
+// 	add([
+// 		text("*(A.D can jump twice!) ", { size: 15 }),
+// 		pos(vec2(30, 345)),
+// 		origin("left"),
+// 		color(255, 255, 255),
+// 		layer("ui")
+// 	]);
 
-	const music = play("startmusic");
-	music.loop();
+// 	const music = play("startmusic");
+// 	music.loop();
 
-	onKeyRelease("enter", () => {
-		music.pause();
-		play("startgamesound", {
-		volume: 0.3
-		})
-		wait(1, () => {
-			go("game")
-		})
-	});
-});
+// 	onKeyRelease("enter", () => {
+// 		music.pause();
+// 		play("startgamesound", {
+// 		volume: 0.3
+// 		})
+// 		wait(1, () => {
+// 			go("game")
+// 		})
+// 	});
+// });
 
-go("start");
+// go("start");
 
 
 // main game
 scene("game", () => {
+
+	onKeyPress("o", () => {
+		music.pause();
+	})
 
 	const music = play("gamemusic");
 	music.loop();
@@ -131,7 +141,7 @@ scene("game", () => {
 
 
 	const MAP_WIDTH = 900;
-	const MAP_HEIGHT = 325;
+	const MAP_HEIGHT = 365; //was 325
 	const BLOCK_SIZE = 24;
 	
 	const map = addLevel(
@@ -174,6 +184,7 @@ scene("game", () => {
 		  area(),
 		  scale(1),
 		  solid(),
+		  origin("top")
 		],
 		p: () => [
 		  rect(BLOCK_SIZE, BLOCK_SIZE),
@@ -198,7 +209,7 @@ const player = add([
 	pos(400,400),
 	body(),
 	area(),
-	scale(.09),
+	scale(.08),
 	rotate(0),
 	origin("center"),
 	"player",
@@ -289,8 +300,8 @@ onCollide("bullet", "platform", (bullet) => {
 });
 
 //this sets the properties of the enemies (cont. spawning q"newEnemyInterval)
-const enemyBaseSpeed = 100;
-const enemyIncSpeed = 20;
+const enemyBaseSpeed = 200;
+const enemyIncSpeed = 30;
 
 function spawnEnemies() {
 	let enemyDirection = choose([directions.LEFT, directions.RIGHT]);
@@ -469,9 +480,27 @@ const battery = add([
 	layer("ui")
 ])
 
+function healthEffect(p, n, rad, size) {
+	for (let i =0; i<n; i++) {
+		wait(rand(n * 0.1), () => {
+			for (let i =0; i<2; i++) {
+				add([
+					pos(p.add(rand(vec2(-rad), vec2(rad)))),
+					sprite("healthup"),
+					color(255,255,255),
+					origin("center"),
+					scale(1 * size, 1 * size),
+					grow(rand(47,72) * size),
+					lifespan(0.1),
+				]);
+			}
+		});
+	}
+}
+
 //timer for game
 
-let time = 10;
+let time = 3;
 
 add([
 	text("COUNTDOWN: ", { size: 20, font: "sink"}),
@@ -493,8 +522,12 @@ function countDown() {
 	timeText.text = `${time}`;
 
 	if (time === 0) {
-		go("endGame");
+		go("endGame", player.score);
 		music.pause();
+		play("timeup", {
+			volume: 0.4,
+			detune: rand(-1200, 1200)
+		});
 	}
 };
 
@@ -525,7 +558,7 @@ function updatePlayerShield(shieldPoints) {
 			});
 		}
 		wait(3, () => {
-			go("endGame");
+			go("endGame", player.score);
 			music.pause();
 		})
 	}
@@ -587,21 +620,49 @@ function spawnBattery() {
 player.onCollide("battery", (battery) => {
 	destroy(battery);
 	updatePlayerShield(HEALTH);
+	healthEffect(player.pos, 5, 15, .025);
 	wait(1, spawnBattery);
+	play("battery", {
+		volume:0.2,
+		detune: rand(-1200, 1200)
+	})
 });
 
 spawnBattery();
 
-
 });
 
-scene("endGame", () => {
+go("game");
+
+scene("endGame", (score) => {
 	const MAP_WIDTH = 440;
 	const MAP_HEIGHT = 275;
+
+	layers(["ui", "bg"], "ui");
+
+	add([
+		sprite("gameover"),
+		layer("ui"),
+		scale(2),
+	])
 
 	add([
 		text("Game Over", { size: 40, font: "sink" }),
 		pos(MAP_WIDTH/2, MAP_HEIGHT/3),
+		origin("center"),
+		layer("ui")
+	]);
+
+	add([
+		text(`Score: ${score}`, { size: 40, font: "sink" }),
+		pos((MAP_WIDTH/2 - 15), (MAP_HEIGHT/3 + 45)),
+		origin("center"),
+		layer("ui")
+	]);
+
+	add([
+		rect(450, 3),
+		pos((MAP_WIDTH/2 + 85), (MAP_HEIGHT/3 + 20)),
 		origin("center"),
 		layer("ui")
 	]);
