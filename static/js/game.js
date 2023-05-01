@@ -25,11 +25,16 @@ loadSound("startmusic", '/static/sounds/startmusic.mp3')
 loadSound("gamemusic", '/static/sounds/gamemusic.mp3')
 loadSound("battery", '/static/sounds/battery.wav')
 loadSound("timeup", '/static/sounds/timeup.wav')
+loadSound("restart", '/static/sounds/restart.mp3')
 
 // loadGif('endscreen', '/static/gifs/endscreen.gif')
 
 //start screen
 scene("start", () => {
+
+	const music = play("startmusic");
+	music.loop();
+
 	layers(["ui", "bg"], "ui");
 
 	add([
@@ -103,9 +108,6 @@ scene("start", () => {
 		layer("ui")
 	]);
 
-	const music = play("startmusic");
-	music.loop();
-
 	onKeyRelease("enter", () => {
 		music.pause();
 		play("startgamesound", {
@@ -128,7 +130,7 @@ scene("game", () => {
 	// 	music.pause();
 	// }) 
 
-	const music = play("gamemusic");
+	const music = play("gamemusic")
 	music.loop();
 
 	layers(["bg","obj", "ui"], "obj");
@@ -662,7 +664,7 @@ scene("endGame", (score) => {
 
 	add([
 		text(`Score: ${score}`, { size: 40, font: "sink" }),
-		pos((MAP_WIDTH/2 - 25), (MAP_HEIGHT/3 + 45)),
+		pos((MAP_WIDTH/2 - 15), (MAP_HEIGHT/3 + 45)),
 		origin("center"),
 		layer("ui")
 	]);
@@ -674,7 +676,18 @@ scene("endGame", (score) => {
 		layer("ui")
 	]);
 
-	onKeyRelease("enter", () => {
-		go("main");
-	})
-})
+	add([
+		text("Press Enter to Play Again!", { size: 30, font: "sink"}),
+		pos((MAP_WIDTH/2 + 155), (MAP_HEIGHT/3 + 270)),
+		origin("center"),
+		layer("ui")
+	]);
+
+onKeyRelease("enter", () => {
+	go("start");
+	play("restart", {
+		volume: 0.3,
+		detune: (-1200, 1200)
+	});
+});
+});
