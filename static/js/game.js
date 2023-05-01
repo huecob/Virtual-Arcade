@@ -10,22 +10,123 @@ loadSprite("food", 'static/sprites/strawberry.png');
 loadSprite("block", 'static/sprites/block.png');
 loadSprite("friend", 'static/sprites/friend.png');
 loadSprite("bg", "static/sprites/bg.png");
-loadSprite('snailman', "static/sprites/snailman.png")
+loadSprite('snailman', "static/sprites/snailman.png");
+loadSprite('battery', '/static/sprites/battery.png');
+loadSprite('startscreen', '/static/sprites/startscreen.png')
 
 loadSound("shoot", 'static/sounds/shoot.wav');
 loadSound("explosion", 'static/sounds/explosion.wav')
 loadSound("score", '/static/sounds/score.wav')
 loadSound("gameover", '/static/sounds/gameover.wav')
+loadSound("startgamesound", '/static/sounds/startgamesound.wav')
+loadSound("startmusic", '/static/sounds/startmusic.mp3')
+loadSound("gamemusic", '/static/sounds/gamemusic.mp3')
 
+//start screen
+scene("start", () => {
+	layers(["ui", "bg"], "ui");
+
+	add([
+		sprite("startscreen"),
+		layer("ui"),
+		pos(0,0),
+		scale(3.5)
+	]);
+
+	add([
+		text("Press enter to start", { size: 24 }),
+		pos(vec2(450, 150)),
+		origin("center"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
+
+	add([
+	text("Artificial Dunderhead", { size: 50}),
+	pos(vec2(450, 100)),
+	origin("center"),
+	color(255, 255, 255),
+	layer("ui")
+	]);
+
+	add([
+		text("Controls", { size: 35 }),
+		pos(vec2(30,250)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
+
+	add([
+		rect(300,2 ),
+		pos(vec2(30, 262)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	])
+
+	add([
+		text("Arrow Keys - move A.D. ", { size: 27 }),
+		pos(vec2(30, 285)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
+
+	add([
+		text("Space Bar - shoot ", { size: 27 }),
+		pos(vec2(30, 305)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
+
+	add([
+		text("Up Key - To jump ", { size: 27 }),
+		pos(vec2(30, 325)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
+
+	add([
+		text("*(A.D can jump twice!) ", { size: 15 }),
+		pos(vec2(30, 345)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
+
+	const music = play("startmusic");
+	music.loop();
+
+	onKeyRelease("enter", () => {
+		music.pause();
+		play("startgamesound", {
+		volume: 0.3
+		})
+		wait(1, () => {
+			go("game")
+		})
+	});
+});
+
+go("start");
+
+
+// main game
 scene("game", () => {
 
-	layers(["bg","obj"], "obj")
+	const music = play("gamemusic");
+	music.loop();
+
+	layers(["bg","obj", "ui"], "obj")
 
 	add([
 		sprite("bg"),
 		layer("bg"),
 		pos(0,-110),
-		scale(1)
+		scale(1),
 	]);
 
 
@@ -45,16 +146,16 @@ scene("game", () => {
 		  "-                                          -",
 		  "-                                          -",
 		  "-                                          -",
-		  "-                                pppppp    -",
+		  "-                                pppp      -",
 		  "-                                          -",
 		  "-                                          -",
-		  "-                                          -",
-		  "-                                          -",
+		  "-     pppp                                 -",
+		  "-                         ppp              -",
 		  "-                                          -",
 		  "-             pppp                         -",
 		  "-                                          -",
 		  "-                                          -",
-		  "-                             pppp         -",
+		  "-                               pppp       -",
 		  "-                                          -",
 		  "-          pp                              -",
 		  "-                      ppp                 -",
@@ -102,8 +203,8 @@ const player = add([
 	origin("center"),
 	"player",
 	{
-		shield: 200,
-		score: 200,
+		battery: 100,
+		score: 0,
 	}
 ]);
 
@@ -176,7 +277,6 @@ function spawnBullet(p) {
 }
 
 onKeyPress("space", () => {
-	spawnBullet(player.pos.sub(16,0))
 	spawnBullet(player.pos.add(16,0))
 	play("shoot", {
 		volume: 0.3,
@@ -242,17 +342,15 @@ onUpdate("enemy", (enemy) => {
 	}
 });
 
-onCollide("player", "enemy", (player) => {
-	destroy(player);
-	makeExplosion(player.pos, 5, 3, 3);
-	// play("explosion", {
-	// 	volume: 0.08,
-	// 	detune: rand(-1200, 1200)
-	// })
-	play("gameover", {
+onCollide("player", "enemy", (player, enemy) => {
+	shake(20);
+	makeExplosion(enemy.pos, 8, 8, 8);
+	destroy(enemy);
+	play("explosion", {
 		volume: 0.4,
 		detune: rand(-1200,1200)
 	})
+	updatePlayerShield(-15);
 })
 
 onCollide("enemy", "bullet", (enemy, bullet) => {
@@ -315,7 +413,7 @@ onCollide("enemy", "platform", (enemy, platform) => {
 	})
 });
 
-onCollide("enemy", "ground", (enemy, ground) => {
+onCollide("enemy", "ground", (enemy) => {
 	makeExplosion(enemy.pos, 5, 3, 3);
 	destroy(enemy);
 	play("explosion", {
@@ -330,12 +428,14 @@ add([
 	text("SCORE: ", { size: 20, font: "sink"}),
 	pos(100, 30),
 	origin("center"),
+	layer("ui")
 ]);
 
 const scoreText = add([
 	text("0000000", {size: 20, font: "sink"}),
 	pos(100, 50),
 	origin("center"),
+	layer("ui")
 ])
 
 function updateScore(points) {
@@ -348,33 +448,167 @@ function updateScore(points) {
 }
 
 add([
-	text("%Hacked: ", { size: 20, font: "sink"}),
+	text("Battery: ", { size: 20, font: "sink"}),
 	pos(300, 30),
 	origin("center"),
+	layer("ui")
 ])
 
-const hackHealth = add([
-	rect(52, 12),
-	pos(300,50),
+const batteryBar = add([
+	rect(100, 12),
+	pos(280,50),
 	color(100, 100, 100),
-	origin("center")
+	origin("center"),
+	layer("ui")
 ])
 
-const hackHealthHolderInside = add([
-	rect(50,10),
-	pos(250, 10),
-	color(0,0,0),
-	origin("center")
+const battery = add([
+	rect(90, 6),
+	pos(235, 46.5),
+	color(0, 255, 0),
+	layer("ui")
+])
+
+//timer for game
+
+let time = 10;
+
+add([
+	text("COUNTDOWN: ", { size: 20, font: "sink"}),
+	pos(500, 30),
+	origin("center"),
+	layer("ui")
 ]);
 
-const hackHealthBar = add([
-	rect(50,10),
-	pos(325, 5),
-	color(0, 255, 0),
-])
+const timeText = add([
+	text(`${time}`, {size: 20, font: "sink"}),
+	pos(525, 50),
+	origin("center"),
+	layer("ui"),
+	"timer",
+]);
+
+function countDown() {
+	time -= 1;
+	timeText.text = `${time}`;
+
+	if (time === 0) {
+		go("endGame");
+		music.pause();
+	}
+};
+
+loop(1, countDown);
+
+
+//handle player health
+
+function updatePlayerShield(shieldPoints) {
+	player.battery += shieldPoints;
+	player.battery = Math.max(player.battery, 0);
+	player.battery = Math.min(player.battery, 100);
+
+	battery.width = 50 * (player.battery / 100);
+
+	if (player.battery < 20) battery.color = rgb(255, 0, 0);
+	else if (player.battery < 50) battery.color = rgb(255, 127, 0);
+
+	if (player.battery <= 0) {
+		destroy(player);
+		for (let i = 0; i < 500; i++) {
+			wait(0.01 * i, () => {
+				makeExplosion(vec2(rand(0, MAP_WIDTH), rand(0,MAP_HEIGHT)), 5, 10, 10);
+				play("gameover", {
+					volume: 0.2,
+					detune: rand(-1200, 1200),
+				});
+			});
+		}
+		wait(3, () => {
+			go("endGame");
+			music.pause();
+		})
+	}
+}
+
+//points to collect
+
+function spawnPoints() {
+	let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
+	add([sprite("food"), pos(xpos, BLOCK_SIZE), area(), body(), scale(0.3), "food"]);
+}
+
+onUpdate("food", (food) => {
+	if (food.pos.y > 1200) {
+		destroy(food);
+		spawnPoints();
+	}
+});
+
+spawnPoints();
+
+const POINTS = 100;
+
+player.onCollide("food", (food) => {
+	destroy(food);
+	scoreEffect(player.pos, 8, 3, 3);
+	updateScore(POINTS),
+	wait(1, spawnPoints);
+})
+
+function scoreEffect(p, n, rad, size) {
+	for (let i =0; i<n; i++) {
+		wait(rand(n * 0.1), () => {
+			for (let i =0; i<2; i++) {
+				add([
+					pos(p.add(rand(vec2(-rad), vec2(rad)))),
+					circle(1),
+					color(255,255,0),
+					origin("center"),
+					scale(1 * size, 1 * size),
+					grow(rand(47,72) * size),
+					lifespan(0.1),
+				]);
+			}
+		});
+	}
+}
+
+//collect health
+
+const HEALTH = 25;
+
+function spawnBattery() {
+	let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
+	add([sprite("battery"), pos(xpos, BLOCK_SIZE), scale(0.019), body(), area(), "battery"])
+	pos(xpos, BLOCK_SIZE), area()
+}
+
+player.onCollide("battery", (battery) => {
+	destroy(battery);
+	updatePlayerShield(HEALTH);
+	wait(1, spawnBattery);
+});
+
+spawnBattery();
+
 
 });
-go("game");
 
-// let's make some enemies (:
+scene("endGame", () => {
+	const MAP_WIDTH = 440;
+	const MAP_HEIGHT = 275;
+
+	add([
+		text("Game Over", { size: 40, font: "sink" }),
+		pos(MAP_WIDTH/2, MAP_HEIGHT/3),
+		origin("center"),
+		layer("ui")
+	]);
+
+	onKeyRelease("enter", () => {
+		go("main");
+	})
+})
+
 
