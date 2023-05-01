@@ -123,9 +123,10 @@ loadSound("timeup", '/static/sounds/timeup.wav')
 // main game
 scene("game", () => {
 
-	onKeyPress("o", () => {
-		music.pause();
-	})
+	//mute function for sound testing w/o bgm
+	// onKeyPress("o", () => {
+	// 	music.pause();
+	// }) 
 
 	const music = play("gamemusic");
 	music.loop();
@@ -141,7 +142,7 @@ scene("game", () => {
 
 
 	const MAP_WIDTH = 900;
-	const MAP_HEIGHT = 365; //was 325
+	const MAP_HEIGHT = 325;
 	const BLOCK_SIZE = 24;
 	
 	const map = addLevel(
@@ -328,19 +329,6 @@ function spawnEnemies() {
 spawnEnemies();
 
 
-// this spawns the enemy
-// const enemy = add([
-// 	sprite("badguys"),
-// 	pos(0, rand(0, MAP_HEIGHT -20)),
-// 	area(),
-// 	scale(0.5),
-// 	"enemy",
-// 	{
-// 		speedX: rand(100 * 0.5, 200 * 1.5) * choose([-1,1]),
-// 		speedY: rand(100 * 0.1, 200 * 0.5) * choose([-1,1])
-// 	}
-// ])
-
 //this randomizes the enemy movement but this needs to variable enemy
 onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
@@ -500,7 +488,7 @@ function healthEffect(p, n, rad, size) {
 
 //timer for game
 
-let time = 3;
+let time = 150;
 
 add([
 	text("COUNTDOWN: ", { size: 20, font: "sink"}),
@@ -621,7 +609,7 @@ player.onCollide("battery", (battery) => {
 	destroy(battery);
 	updatePlayerShield(HEALTH);
 	healthEffect(player.pos, 5, 15, .025);
-	wait(1, spawnBattery);
+	wait(5, spawnBattery);
 	play("battery", {
 		volume:0.2,
 		detune: rand(-1200, 1200)
@@ -655,7 +643,7 @@ scene("endGame", (score) => {
 
 	add([
 		text(`Score: ${score}`, { size: 40, font: "sink" }),
-		pos((MAP_WIDTH/2 - 15), (MAP_HEIGHT/3 + 45)),
+		pos((MAP_WIDTH/2 - 25), (MAP_HEIGHT/3 + 45)),
 		origin("center"),
 		layer("ui")
 	]);
