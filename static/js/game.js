@@ -29,95 +29,95 @@ loadSound("timeup", '/static/sounds/timeup.wav')
 // loadGif('endscreen', '/static/gifs/endscreen.gif')
 
 //start screen
-// scene("start", () => {
-// 	layers(["ui", "bg"], "ui");
+scene("start", () => {
+	layers(["ui", "bg"], "ui");
 
-// 	add([
-// 		sprite("startscreen"),
-// 		layer("ui"),
-// 		pos(0,0),
-// 		scale(3.5)
-// 	]);
+	add([
+		sprite("startscreen"),
+		layer("ui"),
+		pos(0,0),
+		scale(3.5)
+	]);
 
-// 	add([
-// 		text("Press enter to start", { size: 24 }),
-// 		pos(vec2(450, 150)),
-// 		origin("center"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	]);
+	add([
+		text("Press enter to start", { size: 24 }),
+		pos(vec2(450, 150)),
+		origin("center"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
 
-// 	add([
-// 	text("Artificial Dunderhead", { size: 50}),
-// 	pos(vec2(450, 100)),
-// 	origin("center"),
-// 	color(255, 255, 255),
-// 	layer("ui")
-// 	]);
+	add([
+	text("Artificial Dunderhead", { size: 50}),
+	pos(vec2(450, 100)),
+	origin("center"),
+	color(255, 255, 255),
+	layer("ui")
+	]);
 
-// 	add([
-// 		text("Controls", { size: 35 }),
-// 		pos(vec2(30,250)),
-// 		origin("left"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	]);
+	add([
+		text("Controls", { size: 35 }),
+		pos(vec2(30,250)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
 
-// 	add([
-// 		rect(300,2 ),
-// 		pos(vec2(30, 262)),
-// 		origin("left"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	])
+	add([
+		rect(300,2 ),
+		pos(vec2(30, 262)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	])
 
-// 	add([
-// 		text("Arrow Keys - move A.D. ", { size: 27 }),
-// 		pos(vec2(30, 285)),
-// 		origin("left"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	]);
+	add([
+		text("Arrow Keys - move A.D. ", { size: 27 }),
+		pos(vec2(30, 285)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
 
-// 	add([
-// 		text("Space Bar - shoot ", { size: 27 }),
-// 		pos(vec2(30, 305)),
-// 		origin("left"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	]);
+	add([
+		text("Space Bar - shoot ", { size: 27 }),
+		pos(vec2(30, 305)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
 
-// 	add([
-// 		text("Up Key - To jump ", { size: 27 }),
-// 		pos(vec2(30, 325)),
-// 		origin("left"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	]);
+	add([
+		text("Up Key - To jump ", { size: 27 }),
+		pos(vec2(30, 325)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
 
-// 	add([
-// 		text("*(A.D can jump twice!) ", { size: 15 }),
-// 		pos(vec2(30, 345)),
-// 		origin("left"),
-// 		color(255, 255, 255),
-// 		layer("ui")
-// 	]);
+	add([
+		text("*(A.D can jump twice!) ", { size: 15 }),
+		pos(vec2(30, 345)),
+		origin("left"),
+		color(255, 255, 255),
+		layer("ui")
+	]);
 
-// 	const music = play("startmusic");
-// 	music.loop();
+	const music = play("startmusic");
+	music.loop();
 
-// 	onKeyRelease("enter", () => {
-// 		music.pause();
-// 		play("startgamesound", {
-// 		volume: 0.3
-// 		})
-// 		wait(1, () => {
-// 			go("game")
-// 		})
-// 	});
-// });
+	onKeyRelease("enter", () => {
+		music.pause();
+		play("startgamesound", {
+		volume: 0.3
+		})
+		wait(1, () => {
+			go("game")
+		})
+	});
+});
 
-// go("start");
+go("start");
 
 
 // main game
@@ -131,7 +131,7 @@ scene("game", () => {
 	const music = play("gamemusic");
 	music.loop();
 
-	layers(["bg","obj", "ui"], "obj")
+	layers(["bg","obj", "ui"], "obj");
 
 	add([
 		sprite("bg"),
@@ -141,7 +141,7 @@ scene("game", () => {
 	]);
 
 
-	const MAP_WIDTH = 900;
+	const MAP_WIDTH = 600;
 	const MAP_HEIGHT = 325;
 	const BLOCK_SIZE = 24;
 	
@@ -188,7 +188,7 @@ scene("game", () => {
 		  origin("top")
 		],
 		p: () => [
-		  rect(BLOCK_SIZE, BLOCK_SIZE),
+		  rect(BLOCK_SIZE, BLOCK_SIZE/2),
 		  color(0, 0, 255),
 		  "platform",
 		  area(),
@@ -212,7 +212,7 @@ const player = add([
 	area(),
 	scale(.08),
 	rotate(0),
-	origin("center"),
+	origin("bot"),
 	"player",
 	{
 		battery: 100,
@@ -320,13 +320,18 @@ function spawnEnemies() {
 		"enemy",
 		{
 			speedX: rand(enemeySpeed * 0.5, 200 * 1.5) * choose([-1,1]),
-			speedY: rand(enemeySpeed * 0.1, 200 * 0.5) * choose([-1,1])
+			speedY: rand(enemeySpeed * 0.1, 200 * 0.5) * choose([-1,1]),
+			zpos: 1000,
 		}
 	]);
 
 	wait(newEnemyInterval, spawnEnemies);
 }
 spawnEnemies();
+
+// onUpdate("enemy", (enemy) => {
+// 	enemy.scale += .15;
+// });
 
 
 //this randomizes the enemy movement but this needs to variable enemy
@@ -350,7 +355,7 @@ onCollide("player", "enemy", (player, enemy) => {
 		detune: rand(-1200,1200)
 	})
 	updatePlayerShield(-15);
-})
+});
 
 onCollide("enemy", "bullet", (enemy, bullet) => {
 	makeExplosion(enemy.pos, 5, 5 ,5);
@@ -379,7 +384,7 @@ function makeExplosion(p, n, rad, size) {
 			}
 		});
 	}
-}
+};
 
 function lifespan(time) {
 	let timer = 0;
@@ -391,7 +396,7 @@ function lifespan(time) {
 			}
 		}
 	}
-}
+};
 
 function grow(rate) {
 	return {
@@ -401,7 +406,7 @@ function grow(rate) {
 			this.scale.y += n;
 		}
 	}
-}
+};
 
 onCollide("enemy", "platform", (enemy, platform) => {
 	makeExplosion(enemy.pos, 5, 3, 3);
@@ -435,7 +440,7 @@ const scoreText = add([
 	pos(100, 50),
 	origin("center"),
 	layer("ui")
-])
+]);
 
 function updateScore(points) {
 	player.score += points;
@@ -444,22 +449,22 @@ function updateScore(points) {
 		volume: 0.5,
 		detune: rand(-1200,1200)
 	})
-}
+};
 
 add([
 	text("Battery: ", { size: 20, font: "sink"}),
 	pos(300, 30),
 	origin("center"),
 	layer("ui")
-])
+]);
 
-const batteryBar = add([
+add([
 	rect(100, 12),
 	pos(280,50),
 	color(100, 100, 100),
 	origin("center"),
 	layer("ui")
-])
+]);
 
 const battery = add([
 	rect(90, 6),
@@ -484,7 +489,7 @@ function healthEffect(p, n, rad, size) {
 			}
 		});
 	}
-}
+};
 
 //timer for game
 
@@ -554,17 +559,20 @@ function updatePlayerShield(shieldPoints) {
 
 //points to collect
 
-function spawnPoints() {
-	let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
-	add([sprite("food"), pos(xpos, BLOCK_SIZE), area(), body(), scale(0.3), "food"]);
-}
 
 onUpdate("food", (food) => {
-	if (food.pos.y > 1200) {
-		destroy(food);
-		spawnPoints();
+	food.move(0, food.speed);
+	if (food.speed.y - food.height > height()) {
+		destroy(food)
 	}
 });
+
+function spawnPoints() {
+	let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
+	add([sprite("food"), pos(xpos, BLOCK_SIZE), area(), scale(0.3), "food",
+	{
+		speed: rand(40, 100) 
+	}])};
 
 spawnPoints();
 
@@ -573,7 +581,7 @@ const POINTS = 100;
 player.onCollide("food", (food) => {
 	destroy(food);
 	scoreEffect(player.pos, 8, 3, 3);
-	updateScore(POINTS),
+	updateScore(POINTS);
 	wait(1, spawnPoints);
 })
 
@@ -601,9 +609,18 @@ const HEALTH = 25;
 
 function spawnBattery() {
 	let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
-	add([sprite("battery"), pos(xpos, BLOCK_SIZE), scale(0.019), body(), area(), "battery"])
+	add([sprite("battery"), pos(xpos, BLOCK_SIZE), scale(0.019), area(), "battery", 
+		{
+			speed: rand(10, 120)
+		}])
 	pos(xpos, BLOCK_SIZE), area()
 }
+
+onUpdate("battery", (battery) => {
+	battery.move(0, battery.speed);
+	if (battery.speed.y - battery.height > height()) {
+		destroy(battery)
+}});
 
 player.onCollide("battery", (battery) => {
 	destroy(battery);
@@ -620,8 +637,10 @@ spawnBattery();
 
 });
 
-go("game");
+// go("game"); for testing sections
 
+
+//gameover!
 scene("endGame", (score) => {
 	const MAP_WIDTH = 440;
 	const MAP_HEIGHT = 275;
@@ -659,5 +678,3 @@ scene("endGame", (score) => {
 		go("main");
 	})
 })
-
-
