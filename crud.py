@@ -62,6 +62,11 @@ def get_game_by_id(game_id):
 def get_user_highest_score(user_id):
     """Finds the user's highest score data"""
 
+    return GameSession.query.filter_by(user_id=user_id).order_by(GameSession.score.desc()).first()
+
+def get_highest_score():
+    """Returns the reigning champion's highest score"""
+
     return GameSession.query.order_by(GameSession.score.desc()).first()
 
 def check_bad_word(word): 
