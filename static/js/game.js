@@ -217,7 +217,7 @@ const player = add([
 	origin("bot"),
 	"player",
 	{
-		battery: 100,
+		battery: 10,
 		score: 0,
 	}
 ]);
@@ -495,7 +495,7 @@ function healthEffect(p, n, rad, size) {
 
 //timer for game
 
-let time = 150;
+let time = 15;
 
 add([
 	text("COUNTDOWN: ", { size: 20, font: "sink"}),
@@ -516,8 +516,8 @@ function countDown() {
 	time -= 1;
 	timeText.text = `${time}`;
 
-	if (time === 0) {
-		go("endGame", player.score);
+	if (time === 0) {	
+		go("endGame", player.score, time = 15);
 		music.pause();
 		play("timeup", {
 			volume: 0.4,
@@ -553,7 +553,7 @@ function updatePlayerShield(shieldPoints) {
 			});
 		}
 		wait(3, () => {
-			go("endGame", player.score);
+			go("endGame", player.score, time + 4);
 			music.pause();
 		})
 	}
@@ -643,7 +643,7 @@ spawnBattery();
 
 
 //gameover!
-scene("endGame", (score) => {
+scene("endGame", (score, time) => {
 	const MAP_WIDTH = 440;
 	const MAP_HEIGHT = 275;
 
@@ -664,7 +664,14 @@ scene("endGame", (score) => {
 
 	add([
 		text(`Score: ${score}`, { size: 40, font: "sink" }),
-		pos((MAP_WIDTH/2 - 15), (MAP_HEIGHT/3 + 45)),
+		pos((MAP_WIDTH/2 - 5), (MAP_HEIGHT/3 + 45)),
+		origin("center"),
+		layer("ui")
+	]);
+
+	add([
+		text(`Time: ${time}`, { size: 40, font: "sink" }),
+		pos((MAP_WIDTH/2), (MAP_HEIGHT/3 + 90)),
 		origin("center"),
 		layer("ui")
 	]);
@@ -690,4 +697,25 @@ onKeyRelease("enter", () => {
 		detune: (-1200, 1200)
 	});
 });
+
+//send data to BE
+
+const formInputs = {
+	userScore: score,
+	game_id: 1,
+	seconds: time,
+}
+
+fetch('/scores', {
+	method: 'POST',
+	body: JSON.stringify(formInputs),
+	headers: {
+		'Content-Type': 'application/json'
+	},
+})
+.then(response => response.json())
+.then(data => console.log(data.message))
+
 });
+
+

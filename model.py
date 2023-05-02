@@ -26,12 +26,12 @@ class GameSession(db.Model):
     __tablename__ = "game_session"
 
     session_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    session_date = db.Column(db.DateTime, default = datetime.now())
+    session_date = db.Column(db.DateTime)
 # will auto incrementing a date 'work'? DateTime mod in py to get datetime.now() <-- look this up
     user_id = db.Column(db.Integer, db.ForeignKey("users.user_id"))
     game_id = db.Column(db.Integer, db.ForeignKey("games.game_id"))
     score = db.Column(db.Integer)
-    time_played = db.Column(db.Interval) 
+    time_played = db.Column(db.Integer) 
 # will I need to consider some sort of timer? How to track seconds or minutes? Needs syntax for this
 
     user = db.relationship("User", back_populates="user_session")

@@ -54,6 +54,11 @@ def update_display_name(user_id, new_name):
 
     # you need to apply your language filter here as well.
 
+def get_game_by_id(game_id):
+    """Queries for game by ID #"""
+
+    return Game.query.filter(Game.game_id == game_id).first()
+
 def check_bad_word(word): 
     """Language check"""
 

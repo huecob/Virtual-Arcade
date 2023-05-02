@@ -1,7 +1,8 @@
 """Main Server!! Woohoo!"""
 
 from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect,jsonify)
-from model import connect_to_db, db
+from datetime import datetime
+from model import connect_to_db, db, User, GameSession, Difficulties, GameDifficulty, Game
 import crud
 import json
 
@@ -113,6 +114,30 @@ def logout_user():
     flash("Thanks for playing!")
 
     return redirect('/')
+
+@app.route('/scores', methods=['POST'])
+def handle_score():
+    """Collects Game Session Data"""
+
+    # user_ID, game_ID, score
+
+    user = crud.get_user_by_email(session['email'])
+
+    user_id = user.user_id
+    game_id = request.json["game_id"]
+    score = request.json["userScore"]
+    time_played = request.json["seconds"]
+
+    game_session = GameSession(session_date = datetime.now(), 
+                               user_id = user_id, 
+                               game_id = game_id, 
+                               score = score, 
+                               time_played = time_played)
+    
+    db.session.add(game_session)
+    db.session.commit()
+
+    return "Score receivced: {}".format(score)
 
 
 if __name__ == "__main__":
