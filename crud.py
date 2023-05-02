@@ -59,6 +59,11 @@ def get_game_by_id(game_id):
 
     return Game.query.filter(Game.game_id == game_id).first()
 
+def get_user_highest_score(user_id):
+    """Finds the user's highest score data"""
+
+    return GameSession.query.order_by(GameSession.score.desc()).first()
+
 def check_bad_word(word): 
     """Language check"""
 
