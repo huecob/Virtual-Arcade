@@ -69,6 +69,11 @@ def get_highest_score():
 
     return GameSession.query.order_by(GameSession.score.desc()).first()
 
+def find_users_like(keyword):
+    """Used for keyword search of profiles"""
+
+    return User.query.filter(User.user_display_name.like(f'%{keyword}%')).all()
+
 def check_bad_word(word): 
     """Language check"""
 

@@ -1,4 +1,4 @@
-const updateButton = document.querySelector('.update-display-name');
+const updateButton = document.querySelector('form .update-display-name');
 console.log(updateButton);
 
 

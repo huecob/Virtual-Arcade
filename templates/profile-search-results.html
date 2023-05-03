@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block searchResults %}
+
+<h1>Profile Search Results:</h1>
+
+<ul>
+{% for profile in user_names %}
+{{ profile }}
+{% endfor %}
+</ul>
+
+{% endblock %}

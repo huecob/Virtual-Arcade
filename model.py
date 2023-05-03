@@ -18,7 +18,7 @@ class User(db.Model):
     user_session = db.relationship("GameSession",back_populates="user")
 
     def __repr__(self):
-        return f"<user_id: {self.user_id}, user_pw: {self.user_password} user_email: {self.user_email} display_name: {self.user_display_name}>"
+        return f"<user_id: {self.user_id} user_email: {self.user_email} display_name: {self.user_display_name}>"
 
 class GameSession(db.Model):
     """Session & Score Details"""

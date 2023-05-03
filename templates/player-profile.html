@@ -3,12 +3,15 @@
 {% block profile %}
 
 
-<h1 id="new-name">{{ user.user_display_name }}'s Profile!</h1>
+<h1 id="new-name">{{ user.user_display_name }}'s Profile!</h1><br>
+<div id="user-high-score">HIGHEST SCORE: {{ score }}</div><br>
 Update Display Name: 
 <button class="update-display-name" id={{ user.user_id }}> Edit Name </button>
 <span class=display_name_{{ user.user_id }}> </span>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 
 <canvas id="test-chart"></canvas>
 

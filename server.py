@@ -47,6 +47,26 @@ def show_registration():
 
     return render_template('registration.html')
 
+@app.route('/profile/search')
+def show_profile_search():
+    """Shows the results of a profile search"""
+
+    keyword = request.args.get('keyword')
+
+    target_string = keyword[1:len(keyword) -1]
+
+    if keyword == "":
+        users = crud.get_users()
+        for profiles in users:
+            user_names = profiles.user_display_name
+    else:
+        users = crud.find_users_like(target_string)
+        for profiles in users:
+            user_names = profiles.user_display_name
+
+    return render_template('profile-search-results.html', user_names=user_names)
+
+
 @app.route('/register-user', methods = ['POST'])
 def create_user():
     """Registers a user, shoots them to the DB"""
@@ -73,15 +93,31 @@ def create_user():
         flash("Multiverse Error: There's someone else with the email. 🤪")
 
     return redirect('/registration')
-    
 
 @app.route('/player-profile/<user_id>')
 def show_profile(user_id):
     """Loads Player Profile"""
 
     user = crud.get_users_by_id(user_id)
+    user_high_score = crud.get_user_highest_score(user_id)
 
-    return render_template('player-profile.html', user=user)
+    score = user_high_score.score
+
+    return render_template('player-profile.html', user=user, score=score)
+
+@app.route('/user-score-data')
+def get_user_score_data():
+    """Handle sending user score data to FE"""
+
+    user = crud.get_user_by_email(session['email'])
+
+    user_id = user.user_id
+
+    user_high_score = crud.get_user_highest_score(user_id)
+
+    
+
+    return jsonify({ "score": user_high_score})
 
 @app.route('/update-display-name', methods=['POST'])
 def update_name():
@@ -96,7 +132,6 @@ def update_name():
 
     return jsonify({"code": "Success",
                     "name": newName})
-
 
 @app.route('/game-1')
 def play_game():

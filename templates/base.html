@@ -9,8 +9,20 @@
         {% block kaboomcdn %}{% endblock %}
 
         {% block head %}{% endblock %}
+        <form method="GET" name='profile-search' action="/profile/search">
+        <div class="row">
+            <input id="search-keyword" class="form-control" type="text" value="search profiles!" name="keyword"><br>   
+            <small class="form-text text-muted">
+                Leave it blank to show all profiles!
+            </small>
+            <input type="submit" value="search" class="btn btn-primary"><br><br>
+        </div>
+        
+
+
     </head>
     <body>
+        {% block searchResults %}{% endblock %}
         {% block game1 %}{% endblock %}
         {% block profile %}{% endblock %}
         {% block body %}{% endblock %}
