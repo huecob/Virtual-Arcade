@@ -217,7 +217,7 @@ const player = add([
 	origin("bot"),
 	"player",
 	{
-		battery: 10,
+		battery: 100,
 		score: 0,
 	}
 ]);
@@ -495,7 +495,7 @@ function healthEffect(p, n, rad, size) {
 
 //timer for game
 
-let time = 15;
+let time = 150;
 
 add([
 	text("COUNTDOWN: ", { size: 20, font: "sink"}),
@@ -517,7 +517,7 @@ function countDown() {
 	timeText.text = `${time}`;
 
 	if (time === 0) {	
-		go("endGame", player.score, time = 15);
+		go("endGame", player.score, time = 150);
 		music.pause();
 		play("timeup", {
 			volume: 0.4,

@@ -139,10 +139,13 @@ def update_name():
                     "name": newName})
 
 @app.route('/game-1')
-def play_game():
+def play_game1():
     """This will be where your game will live"""
 
-    return render_template('game-page.html')
+    user = crud.get_user_by_email(session['email'])
+    user_name = user.user_display_name
+
+    return render_template('game-page-1.html', user_name=user_name)
 
 @app.route('/logout')
 def logout_user():
@@ -178,6 +181,12 @@ def handle_score():
     db.session.commit()
 
     return "Score receivced: {}".format(score)
+
+@app.route('/game-2')
+def play_game2():
+    """Let's play game 2!"""
+
+    return render_template('game-page-2.html')
 
 
 if __name__ == "__main__":
