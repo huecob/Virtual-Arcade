@@ -188,6 +188,13 @@ def play_game2():
 
     return render_template('game-page-2.html')
 
+@app.route('/user-metrics/<user_id>')
+def deliver_user_metrics(user_id):
+    """Deliver metrics"""
+
+    time_played = crud.seconds_played(user_id)
+
+    
 
 if __name__ == "__main__":
     connect_to_db(app)

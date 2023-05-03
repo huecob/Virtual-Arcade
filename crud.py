@@ -1,6 +1,8 @@
 """CRUD Operations"""
 
 from model import db, User, GameSession, Game, connect_to_db
+from datetime import datetime, timedelta
+from sqlalchemy import and_
 import json
 
 def create_user(email, password, user_display_name):
@@ -73,6 +75,32 @@ def find_users_like(keyword):
     """Used for keyword search of profiles"""
 
     return User.query.filter(User.user_display_name.like(f'%{keyword}%')).all()
+
+def seconds_played_ever(user_id):
+    """Sumnation of time spent in-game"""
+
+    user = GameSession.query.filter(GameSession.user_id == user_id).all() #this returned all user game sesh data
+
+    retval = 0
+    
+    for sessions in user:
+       retval += sessions.time_played
+
+    return retval
+
+def last_7_days(user_id):
+    """Find game session data from the last 7 days"""
+
+    last_week = datetime.now() - timedelta(days=7)
+
+    sessions = GameSession.query.filter(
+        and_(
+            GameSession.user_id == user_id,
+            GameSession.session_date >= last_week
+        )
+    ).order_by(GameSession.session_date).all()
+
+    return sessions #this is all the user score data
 
 def check_bad_word(word): 
     """Language check"""

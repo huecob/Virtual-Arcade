@@ -8,8 +8,10 @@ loadSprite("ghost", '/static/sprites/ghost.png')
 loadSprite("bg-day", '/static/sprites/daytime-graveyard.png')
 loadSprite("bg-night", '/static/sprites/nightime-graveyard.jpeg')
 loadSprite('stone-platform', 'static/sprites/stone-platform.png')
+loadSprite('torch', '/static/sprites/torch.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
+loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
 
 scene("main", () => {
 
@@ -169,36 +171,42 @@ onKeyRelease("right", () => {
 	player.angle = 0;
 });
 
-
-// const flashLight = add([
-//     rect(100,20),
-//     polygon([vec2(50,-80), vec2(0,0), vec2(100,0)]),
-//     origin("center"),
-//     color(255,255,0),
-//     attach(player, {offset: vec2(0,-40)}),
-// ]);
-
-function shineFlashight(p) {
-    let flashLightDirection = current_direction === directions.RIGHT ? RIGHT : LEFT;
-    add([
-        rect(100,20),
-        drawPolygon(
-            { pts: [vec2(50,-80), 
-                vec2(0,0), 
-                vec2(100,0)]}),
-        pos(p),
-        origin("center"),
-        color(255,255,0),
-        outline(4),
-        "flashlight",
-        move(flashLightDirection, 0),
-    ])
-}
+let torch;
+let light;
 
 onKeyDown("space", () => {
-    shineFlashight(player.pos.add(16,0))
-})
+   torch = add([
+        sprite("torch"),
+        pos(player.pos.add(30, -40)),
+        scale(0.03),
+        origin("center"),
+        "torch",
+        lifespan(0.1),
+    ]),
+    light = add([
+        circle(100),
+        pos(player.pos.add(10,-30)),
+        scale(1),
+        origin("center"),
+        "light",
+        lifespan(0.1),
+        layer("bg"),
+        area(),
+        color(255,255,0)
+    ]);
+});
 
+function lifespan(time) {
+	let timer = 0;
+	return {
+		update() {
+			timer += dt();
+			if (timer >= time) {
+				destroy(this);
+			}
+		}
+	}
+};
 
 
 
@@ -252,6 +260,10 @@ spawnEnemies();
 onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
 });
+
+onCollide("light", "enemy", (light, enemy) => {
+    
+})
 
 });
 
