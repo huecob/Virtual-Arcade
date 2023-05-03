@@ -4,10 +4,11 @@
 
 <h1>Profile Search Results:</h1>
 
+{% for users in user_data %}
 <ul>
-{% for profile in user_names %}
-{{ profile }}
-{% endfor %}
+   <a href="/player-profile/{{ users[1] }}"> {{ users[0] }} </a>
 </ul>
+{% endfor %}
+
 
 {% endblock %}

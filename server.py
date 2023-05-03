@@ -55,16 +55,17 @@ def show_profile_search():
 
     target_string = keyword[1:len(keyword) -1]
 
-    if keyword == "":
+    if keyword == "search profiles!":
         users = crud.get_users()
-        for profiles in users:
-            user_names = profiles.user_display_name
-    else:
+        user_data = [(user.user_display_name, user.user_id)for user in users]
+        
+    elif len(keyword) > 0:
         users = crud.find_users_like(target_string)
-        for profiles in users:
-            user_names = profiles.user_display_name
+        user_data = [(user.user_display_name, user.user_id) for user in users]
+    else:
+        user_data = [("There are no users that match.", None)]
 
-    return render_template('profile-search-results.html', user_names=user_names)
+    return render_template('profile-search-results.html', user_data=user_data)
 
 
 @app.route('/register-user', methods = ['POST'])
@@ -99,9 +100,13 @@ def show_profile(user_id):
     """Loads Player Profile"""
 
     user = crud.get_users_by_id(user_id)
+
     user_high_score = crud.get_user_highest_score(user_id)
 
-    score = user_high_score.score
+    if user_high_score is not None:
+         score = user_high_score.score
+    else:
+        score = "No games yet!"
 
     return render_template('player-profile.html', user=user, score=score)
 
