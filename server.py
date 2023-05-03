@@ -1,6 +1,6 @@
 """Main Server!! Woohoo!"""
 
-from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect,jsonify)
+from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect, jsonify)
 from datetime import datetime
 from model import connect_to_db, db, User, GameSession, Difficulties, GameDifficulty, Game
 import crud
@@ -194,7 +194,11 @@ def deliver_user_metrics(user_id):
 
     time_played = crud.seconds_played(user_id)
 
-    
+    user_data = crud.last_7_days(user_id)
+    # print(user_data) #this is a list
+
+    return jsonify({ "user_data": user_data,
+                    "time_played": time_played})
 
 if __name__ == "__main__":
     connect_to_db(app)

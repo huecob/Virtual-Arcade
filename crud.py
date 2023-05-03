@@ -100,7 +100,7 @@ def last_7_days(user_id):
         )
     ).order_by(GameSession.session_date).all()
 
-    return sessions #this is all the user score data
+    return sessions #this is all the user session_data
 
 def check_bad_word(word): 
     """Language check"""
