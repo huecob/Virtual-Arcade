@@ -195,12 +195,23 @@ def deliver_user_metrics(user_id):
     # time_played = crud.seconds_played(user_id)
 
     user_data = crud.last_7_days(user_id)
-    # this will return a list of objs with dates + scores
-    # iterate through LIST to get individual objects
-    # use keys to access date + score values
-    
 
-    return jsonify(user_data)
+    user = crud.get_users_by_id(user_id)
+    display_name = user.user_display_name
+
+    # pass through as Chart.JS needs it
+    # make a list of the last 7 days 
+    # make a list of the last 7 score entries
+
+    date_labels = []
+    score_values = []
+        
+    for session in user_data:
+        #print(session) --> individual dicts, indexable
+        date_labels.append(session['session_date'])
+        score_values.append(session['score'])
+
+    return jsonify({"date_labels": date_labels, "score_values": score_values, "display_name": display_name})
 
 if __name__ == "__main__":
     connect_to_db(app)

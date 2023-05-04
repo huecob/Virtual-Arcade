@@ -107,7 +107,7 @@ def last_7_days(user_id):
 
         y = str(session_date.year)
         mo = session_date.strftime('%B')
-        day = str(session)
+        day = str(session_date.day)
 
         session_date = f"{mo} {day}, {y}"
 
