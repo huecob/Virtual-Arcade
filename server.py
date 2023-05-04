@@ -192,13 +192,15 @@ def play_game2():
 def deliver_user_metrics(user_id):
     """Deliver metrics"""
 
-    time_played = crud.seconds_played(user_id)
+    # time_played = crud.seconds_played(user_id)
 
     user_data = crud.last_7_days(user_id)
-    # print(user_data) #this is a list
+    # this will return a list of objs with dates + scores
+    # iterate through LIST to get individual objects
+    # use keys to access date + score values
+    
 
-    return jsonify({ "user_data": user_data,
-                    "time_played": time_played})
+    return jsonify(user_data)
 
 if __name__ == "__main__":
     connect_to_db(app)

@@ -1,5 +1,5 @@
 const updateButton = document.querySelector('.update-display-name');
-console.log(updateButton);
+// console.log(updateButton);
 
 
 updateButton.addEventListener('click', (evt) => {

@@ -91,6 +91,8 @@ def seconds_played_ever(user_id):
 def last_7_days(user_id):
     """Find game session data from the last 7 days"""
 
+    retval = []
+
     last_week = datetime.now() - timedelta(days=7)
 
     sessions = GameSession.query.filter(
@@ -100,7 +102,19 @@ def last_7_days(user_id):
         )
     ).order_by(GameSession.session_date).all()
 
-    return sessions #this is all the user session_data
+    for session in sessions:
+        session_date = session.session_date
+
+        y = str(session_date.year)
+        mo = session_date.strftime('%B')
+        day = str(session)
+
+        session_date = f"{mo} {day}, {y}"
+
+        score = session.score
+        retval.append({'session_date': session_date, 'score': score})
+
+    return retval #this is all the user session_data
 
 def check_bad_word(word): 
     """Language check"""
