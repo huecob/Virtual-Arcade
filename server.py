@@ -120,8 +120,6 @@ def get_user_score_data():
 
     user_high_score = crud.get_user_highest_score(user_id)
 
-    
-
     return jsonify({ "score": user_high_score})
 
 @app.route('/update-display-name', methods=['POST'])
@@ -197,7 +195,10 @@ def deliver_user_metrics(user_id):
     user_data = crud.last_7_days(user_id)
 
     user = crud.get_users_by_id(user_id)
+
     display_name = user.user_display_name
+
+    total_num_of_games = crud.games_live()
 
     # pass through as Chart.JS needs it
     # make a list of the last 7 days 
@@ -211,7 +212,30 @@ def deliver_user_metrics(user_id):
         date_labels.append(session['session_date'])
         score_values.append(session['score'])
 
-    return jsonify({"date_labels": date_labels, "score_values": score_values, "display_name": display_name})
+    return jsonify({"date_labels": date_labels, 
+                    "score_values": score_values, 
+                    "display_name": display_name,
+                    "number_of_games": total_num_of_games,
+                    })
+
+@app.route('/specific-game-data/<user_id>+<game_id>')
+def show_gam_specific_data(user_id, game_id):
+    """shows specific game data"""
+
+    num_of_games = crud.games_live()
+    dataset = crud.session_data(user_id, game_id)
+
+    retval = {}
+
+    i = 1
+
+    while i < num_of_games:
+        if retval[]
+        
+
+#"games_live": games,
+#"game_ids": game_ids
+#need a set so the game IDs list has unique values
 
 if __name__ == "__main__":
     connect_to_db(app)

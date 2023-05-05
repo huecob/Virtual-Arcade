@@ -2,7 +2,7 @@
 
 from model import db, User, GameSession, Game, connect_to_db
 from datetime import datetime, timedelta
-from sqlalchemy import and_
+from sqlalchemy import (and_, func)
 import json
 
 def create_user(email, password, user_display_name):
@@ -110,11 +110,44 @@ def last_7_days(user_id):
         day = str(session_date.day)
 
         session_date = f"{mo} {day}, {y}"
-
         score = session.score
-        retval.append({'session_date': session_date, 'score': score})
+
+        games_played = session.game_id
+
+        retval.append({'session_date': session_date, 'score': score, 'game_ids': games_played})
 
     return retval #this is all the user session_data
+
+def session_data(user_id, game_id):
+    """Filters specific game data for user"""
+
+    retval = []
+
+    last_week = datetime.now() - timedelta(days=7)
+
+    sessions = GameSession.query.filter(
+        and_(
+            GameSession.user_id == user_id,
+            GameSession.game_id == game_id,
+            GameSession.session_date >= last_week
+        )
+    ).order_by(GameSession.session_date).all()
+
+    return sessions #list of objects again
+
+# def user_specific_game_data(user_id):
+#     """Displays all games the user had played"""
+
+#     user_data = GameSession.query.filter_by(user_id = user_id).all()
+
+#     return user_data
+
+def games_live():
+    """Returns the number of games in DB"""
+
+    game_amount = Game.query.with_entities(func.max(Game.game_id)).scalar()
+
+    return game_amount
 
 def check_bad_word(word): 
     """Language check"""

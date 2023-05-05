@@ -38,7 +38,7 @@ class GameSession(db.Model):
     game = db.relationship("Game", back_populates="game_session")
 
     def __repr__(self):
-        return f"<Session ID: {self.session_id} User: {self.user_id} Score: {self.score}>"
+        return f"<Session ID: {self.session_id} User: {self.user_id} Score: {self.score} Game ID: {self.game_id}>"
     
 
 # genre
