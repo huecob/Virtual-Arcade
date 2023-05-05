@@ -198,7 +198,7 @@ def deliver_user_metrics(user_id):
 
     display_name = user.user_display_name
 
-    total_num_of_games = crud.games_live()
+    # total_num_of_games = crud.games_live()
 
     # pass through as Chart.JS needs it
     # make a list of the last 7 days 
@@ -215,24 +215,9 @@ def deliver_user_metrics(user_id):
     return jsonify({"date_labels": date_labels, 
                     "score_values": score_values, 
                     "display_name": display_name,
-                    "number_of_games": total_num_of_games,
                     })
 
-@app.route('/specific-game-data/<user_id>+<game_id>')
-def show_gam_specific_data(user_id, game_id):
-    """shows specific game data"""
-
-    num_of_games = crud.games_live()
-    dataset = crud.session_data(user_id, game_id)
-
-    retval = {}
-
-    i = 1
-
-    while i < num_of_games:
-        if retval[]
-        
-
+#"number_of_games": total_num_of_games
 #"games_live": games,
 #"game_ids": game_ids
 #need a set so the game IDs list has unique values

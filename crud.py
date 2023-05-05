@@ -1,8 +1,9 @@
 """CRUD Operations"""
 
-from model import db, User, GameSession, Game, connect_to_db
+from model import db, User, GameSession, Game, GameDifficulty, Difficulties, connect_to_db
 from datetime import datetime, timedelta
 from sqlalchemy import (and_, func)
+# from flask_sqlalchemy import SQLAlchemy
 import json
 
 def create_user(email, password, user_display_name):
@@ -114,40 +115,10 @@ def last_7_days(user_id):
 
         games_played = session.game_id
 
-        retval.append({'session_date': session_date, 'score': score, 'game_ids': games_played})
+        retval.append({'session_date': session_date, 'score': score, 'game_id': games_played})
 
     return retval #this is all the user session_data
 
-def session_data(user_id, game_id):
-    """Filters specific game data for user"""
-
-    retval = []
-
-    last_week = datetime.now() - timedelta(days=7)
-
-    sessions = GameSession.query.filter(
-        and_(
-            GameSession.user_id == user_id,
-            GameSession.game_id == game_id,
-            GameSession.session_date >= last_week
-        )
-    ).order_by(GameSession.session_date).all()
-
-    return sessions #list of objects again
-
-# def user_specific_game_data(user_id):
-#     """Displays all games the user had played"""
-
-#     user_data = GameSession.query.filter_by(user_id = user_id).all()
-
-#     return user_data
-
-def games_live():
-    """Returns the number of games in DB"""
-
-    game_amount = Game.query.with_entities(func.max(Game.game_id)).scalar()
-
-    return game_amount
 
 def check_bad_word(word): 
     """Language check"""
@@ -158,8 +129,27 @@ def check_bad_word(word):
         return True
     else:
         return False
+    
+    
+def game_specific_user_data(user_id):
+    """Returns an dictionary. 
+    Keys are game_ids
+    Values are a list of dictionaries (game_session data)"""
+
+    retval = {}
+
+    data = last_7_days(user_id)
+
+    for element in data:
+        if element['game_id'] not in retval:
+            retval[element['game_id']] = [element]
+        else:
+            retval[element['game_id']].append(element)
+
+    return retval
 
 if __name__ == "__main__":
     from server import app
-    app.app_context().push()
     connect_to_db(app)
+    app.app_context().push()
+    
