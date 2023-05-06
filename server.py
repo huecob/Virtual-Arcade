@@ -1,7 +1,7 @@
 """Main Server!! Woohoo!"""
 
 from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect, jsonify)
-from datetime import datetime
+from datetime import datetime, timedelta
 from model import connect_to_db, db, User, GameSession, Difficulties, GameDifficulty, Game
 import crud
 import json
@@ -190,15 +190,11 @@ def play_game2():
 def deliver_user_metrics(user_id):
     """Deliver metrics"""
 
-    # time_played = crud.seconds_played(user_id)
-
     user_data = crud.last_7_days(user_id)
 
     user = crud.get_users_by_id(user_id)
 
     display_name = user.user_display_name
-
-    # total_num_of_games = crud.games_live()
 
     # pass through as Chart.JS needs it
     # make a list of the last 7 days 
@@ -216,6 +212,35 @@ def deliver_user_metrics(user_id):
                     "score_values": score_values, 
                     "display_name": display_name,
                     })
+
+@app.route('/specific-game-data/<user_id>')
+def deliver_game_specific_user_metrics(user_id):
+    """Delivers a dictionary with values of game data organized game_ids as keys"""
+
+    data = crud.game_specific_user_data(user_id)
+
+    game_id_labels = []
+    specific_game_data = []
+    date_labels = []
+
+    for datum in data:
+        # print(f'the data***********: {datum}') => keys
+        game_id_labels.append(datum)
+        for game_data in data[datum]:
+            # print(f"HERE: ********** {game_data}") => values
+            specific_game_data.append(game_data)
+
+    today = datetime.now().date()
+    delta = timedelta(days=7)
+
+    for i in range(7):
+        date = today - timedelta(days=i)
+        date_str = date.strftime('%B %d, %Y')
+        date_labels.append(date_str)
+
+    return jsonify({'game_id': game_id_labels,
+                    'game_data': specific_game_data,
+                    'date_labels': date_labels})
 
 #"number_of_games": total_num_of_games
 #"games_live": games,

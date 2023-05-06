@@ -16,7 +16,6 @@ const totalChart = new Chart(
     document.querySelector('#totals-chart'),
     {
         type: 'line',
-        label: `${username}'s Scores Over Time`,
         data: {
             labels: labels,
             datasets: [
@@ -26,26 +25,35 @@ const totalChart = new Chart(
     })
 })
 
-fetch(`/specific-game-data/${user_id}+${game_id}`)
+fetch(`/specific-game-data/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
-    
-    for (let i = 0; i < serverData['number_of_games']; i++) {
-        let gameChart;
-        gameChart = new Chart(
-            document.querySelector(`#game${i}-chart`),
-        {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [
-                    {data: scores}
-                ]
-            }
-        }
 
-)}
-    
+const score_data = [];
+const labels = serverData['date_labels'];
+const game_data = serverData['game_data'];
+
+for (let element in game_data) {
+    // console.log(game_data[element])
+    datum = game_data[element]
+    score_data.push(datum['score'])
+}
+
+
+console.log(score_data)
+console.log(labels)
+
+// const ADChart = new Chart(
+//     document.querySelector('#ADchart'),
+//     {
+//         type: 'line',
+//         data: {
+//             labels: labels,
+//             datasets: [
+//                 {data: scores}
+//             ]
+//         }
+//     })
 })
 
 
