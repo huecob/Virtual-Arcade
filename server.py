@@ -219,7 +219,7 @@ def deliver_game_specific_user_metrics(user_id):
 
     data = crud.game_specific_user_data(user_id)
 
-    game_id_labels = []
+    game_id_labels = [] #This is passed to AJAX call but not used quite yet.
     specific_game_data = []
     date_labels = []
 

@@ -25,6 +25,9 @@ const totalChart = new Chart(
     })
 })
 
+// Since game 2 isn't live yet, we can't test if the obj we created in server.py (222)
+// I suggest to myself that we go back at some point and think of the best way to render these charts.
+
 fetch(`/specific-game-data/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
@@ -39,21 +42,28 @@ for (let element in game_data) {
     score_data.push(datum['score'])
 }
 
+if (labels.length > score_data.length) {
+    newDates = labels.slice(0,(score_data.length))
+    newDates.reverse()
+}
 
-console.log(score_data)
-console.log(labels)
+// console.log(newDates)
+// console.log(score_data)
+// console.log(labels)
+// crop date label lengths to match the length of scores list
 
-// const ADChart = new Chart(
-//     document.querySelector('#ADchart'),
-//     {
-//         type: 'line',
-//         data: {
-//             labels: labels,
-//             datasets: [
-//                 {data: scores}
-//             ]
-//         }
-//     })
+
+const ADChart = new Chart(
+    document.querySelector('#ADChart'),
+    {
+        type: 'line',
+        data: {
+            labels: newDates,
+            datasets: [
+                {data: score_data}
+            ]
+        }
+    })
 })
 
 
