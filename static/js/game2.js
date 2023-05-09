@@ -9,6 +9,7 @@ loadSprite("bg-day", '/static/sprites/daytime-graveyard.png')
 loadSprite("bg-night", '/static/sprites/nightime-graveyard.jpeg')
 loadSprite('stone-platform', 'static/sprites/stone-platform.png')
 loadSprite('torch', '/static/sprites/torch.png')
+loadSprite('fog', '/static/sprites/fog.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
@@ -27,6 +28,7 @@ scene("main", () => {
         scale(0.58)
     ]);
 
+
     let time = 135
 
     add([
@@ -34,6 +36,7 @@ scene("main", () => {
         pos(800, 35),
         origin("center"),
         layer("ui"),
+        z(1)
     ])
 
     const timeText = add([
@@ -41,7 +44,8 @@ scene("main", () => {
         pos(600,35),
         origin("center"),
         layer("ui"),
-        "timer"
+        "timer",
+        z(1)
     ]);
 
     function countDown() {
@@ -113,9 +117,10 @@ const map = addLevel(
             sprite('stone-platform'),
             "platform",
             area(),
-            // solid(),
+            solid(),
             scale(0.125),
-            origin("center")
+            origin("center"),
+            jumpThru()
         ],
         "-": () => [
             rect(BLOCK_SIZE /10, BLOCK_SIZE),
@@ -141,6 +146,18 @@ const player = add([
         score: 0,
     }
 ])
+
+const fog = add([
+    sprite("fog"),
+    layer("ui"),
+    origin("center"),
+    scale(10),
+    pos(player.pos),
+  ]);
+
+player.onUpdate(() => {
+    fog.pos = player.pos;
+});
 
 const directions = {
 	LEFT: "left",
@@ -182,7 +199,7 @@ onKeyDown("space", () => {
         origin("center"),
         "torch",
         lifespan(0.1),
-    ]),
+    ])
     light = add([
         circle(100),
         pos(player.pos.add(10,-30)),
@@ -192,9 +209,18 @@ onKeyDown("space", () => {
         lifespan(0.1),
         layer("bg"),
         area(),
-        color(255,255,0)
+        color(255,255,0, 0.025)
     ]);
 });
+
+onKeyRelease("space", () => {
+    destroy(torch);
+    destroy(light);
+});
+
+// onCollide("enemy", "light", (enemy) => {
+//     enemy.move
+// })
 
 function lifespan(time) {
 	let timer = 0;
@@ -207,8 +233,6 @@ function lifespan(time) {
 		}
 	}
 };
-
-
 
 let canJump = true;
 let canDoubleJump = true;
@@ -245,6 +269,7 @@ function spawnEnemies() {
         scale(.25),
         "enemy",
         layer("ui"),
+        z(-1),
         origin("center"),
         {
             speedX: rand(enemeySpeed * 0.5, 200 * 1.5) * choose([-1,1]),
@@ -261,9 +286,7 @@ onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
 });
 
-onCollide("light", "enemy", (light, enemy) => {
-    
-})
+
 
 });
 

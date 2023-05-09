@@ -21,6 +21,17 @@ const totalChart = new Chart(
             datasets: [
                 {data: scores}
             ]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "ALL SCORE DATA",
+                    position: "top",
+                    align: "start",
+                    padding: 20,
+                }
+            }
         }
     })
 })
@@ -62,6 +73,17 @@ const ADChart = new Chart(
             datasets: [
                 {data: score_data}
             ]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                    text: "A.D. SCORE DATA",
+                    position: "top",
+                    align: "start",
+                    padding: 20
+                }
+            }
         }
     })
 })
