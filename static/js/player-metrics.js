@@ -23,6 +23,7 @@ const totalChart = new Chart(
             ]
         },
         options: {
+            responsive: false,
             plugins: {
                 title: {
                     display: true,
@@ -75,6 +76,7 @@ const ADChart = new Chart(
             ]
         },
         options: {
+            responsive: false,
             plugins: {
                 title: {
                     display: true,

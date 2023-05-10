@@ -32,7 +32,7 @@ def show_homepage():
     friendly_tip = random.choice(tips)
 
     if 'email' not in session:
-        return render_template('homepage.html')
+        return render_template('homepage.html',user=user, user_name=user_name, highest_score=highest_score, friendly_tip=friendly_tip)
     else:
         user = crud.get_user_by_email(session['email'])
 
@@ -75,7 +75,7 @@ def show_profile_search():
 
     target_string = keyword[1:len(keyword) -1]
 
-    if keyword == "Search":
+    if keyword == "Search Profiles!":
         users = crud.get_users()
         user_data = [(user.user_display_name, user.user_id)for user in users]
         
