@@ -10,9 +10,13 @@ loadSprite("bg-night", '/static/sprites/nightime-graveyard.jpeg')
 loadSprite('stone-platform', 'static/sprites/stone-platform.png')
 loadSprite('torch', '/static/sprites/torch.png')
 loadSprite('fog', '/static/sprites/fog.png')
+loadSprite('gg-vamp','/static/sprites/gg-vamp.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
+loadSound('match', '/static/sounds/match.mp3')
+loadSound('ghost-hit', '/static/sounds/ghost-spawn.mp3')
+loadSound('bell','/static/sounds/bell.wav')
 
 scene("main", () => {
 
@@ -86,10 +90,10 @@ const map = addLevel(
         "-                                pppp      -",
         "-                                          -",
         "-                                          -",
-        "-     pppp                                 -",
+        "-                                          -",
         "-                         ppp              -",
         "-                                          -",
-        "-             pppp                         -",
+        "-     pppp                                 -",
         "-                                          -",
         "-                                          -",
         "-                               pppp       -",
@@ -116,7 +120,7 @@ const map = addLevel(
         p: () => [
             sprite('stone-platform'),
             "platform",
-            area(),
+            area({ width: 60, height: 7}),
             solid(),
             scale(0.125),
             origin("center"),
@@ -190,14 +194,14 @@ onKeyRelease("right", () => {
 let torch;
 let light;
 
-onKeyDown("space", () => {
+onKeyPress("space", () => {
    torch = add([
         sprite("torch"),
         pos(player.pos.add(30, -40)),
         scale(0.03),
         origin("center"),
         "torch",
-        lifespan(0.1),
+        lifespan(3),
     ])
     light = add([
         circle(100),
@@ -205,27 +209,22 @@ onKeyDown("space", () => {
         scale(1),
         origin("center"),
         "light",
-        lifespan(0.1),
+        lifespan(3),
         layer("bg"),
-        // area(),
+        area({width: 100, height: 100}),
         color(255,255,0, 0.025),
-    ]);
+    ]),
+    play("match", {
+        volume:0.5,
+        detune: rand(-1200,1200)
+    })
 });
 
-let lastPosY = player.pos.y
+// onUpdate("torch", "light", (torch, light) => {
+//     torch.pos = player.pos.add(30, -40);
+//     light.pos = player.pos.add(10, -30)
+// })
 
-
-onCollide("platform", "player", (p) => {
-    if (player.pos.y > lastPosY){
-        player.jump(700)
-    }
-})
-
-
-onKeyRelease("space", () => {
-    destroy(torch);
-    destroy(light);
-});
 
 function lifespan(time) {
 	let timer = 0;
@@ -238,6 +237,22 @@ function lifespan(time) {
 		}
 	}
 };
+
+onCollide("enemy", "light", (enemy, light) => {
+    if (enemy.direction === directions.LEFT) {
+        enemy.direction = directions.RIGHT;
+    } else if (enemy.direction === directions.RIGHT) {
+        enemy.direction = directions.LEFT;
+    }
+});
+
+onUpdate("enemy", (enemy) => {
+    if (enemy.direction === directions.LEFT) {
+        enemy.move(-100, 0);
+    } else if (enemy.direction === directions.RIGHT) {
+        enemy.move(100, 0);
+    }
+});
 
 let canJump = true;
 let canDoubleJump = true;
@@ -259,6 +274,8 @@ onKeyPress("up", () => {
 const enemyBaseSpeed = 250;
 const enemyIncSpeed = 40;
 
+let enemy;
+
 function spawnEnemies() {
     let enemyDirection = choose([directions.LEFT, directions.RIGHT]);
     let xpos = (enemyDirection == directions.LEFT ? MAP_WIDTH/9 : MAP_WIDTH * 3);
@@ -267,7 +284,7 @@ function spawnEnemies() {
     const enemeySpeed = enemyBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
     const newEnemyInterval = 0.8 - (pointsSpeedUp / 20);
 
-    let enemy = add([
+    enemy = add([
         sprite('ghost'),
         pos(xpos,rand(0, MAP_HEIGHT-20)),
         area(),
@@ -287,16 +304,162 @@ function spawnEnemies() {
 }
 spawnEnemies();
 
+onCollide("player", "enemy", (player, enemy) => {
+    shake(20);
+    makeExplosion(enemy.pos, 8,8,8);
+    destroy(enemy);
+    play('ghost-hit', {
+        volume: 0.5,
+        detune: rand(-1200,1200)
+    })
+    updatePlayerBlood(-20)
+})
+
 onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
 });
 
-onCollide("enemy", "light", (enemy, light) => {
-    destroy(enemy)
-})
+add([
+	text("SCORE: ", { size: 20, font: "sink"}),
+	pos(100, 30),
+	origin("center"),
+	layer("ui")
+]);
 
+const scoreText = add([
+	text("0000000", {size: 20, font: "sink"}),
+	pos(100, 50),
+	origin("center"),
+	layer("ui")
+]);
 
+function updateScore(points) {
+	player.score += points;
+	scoreText.text = player.score.toString().padStart(6,0);
+	play("score", {
+		volume: 0.5,
+		detune: rand(-1200,1200)
+	})
+};
+
+add([
+	text("Blood: ", { size: 20, font: "sink"}),
+	pos(290, 30),
+	origin("center"),
+	layer("ui")
+]);
+
+add([
+	rect(100, 12),
+	pos(280,50),
+	color(100, 100, 100),
+	origin("center"),
+	layer("ui")
+]);
+
+const blood = add([
+	rect(90, 6),
+	pos(235, 46.5),
+	color(170, 10, 0),
+	layer("ui")
+])
+
+function makeExplosion(p, n, rad, size) {
+	for (let i =0; i<n; i++) {
+		wait(rand(n * 0.1), () => {
+			for (let i =0; i<2; i++) {
+				add([
+					pos(p.add(rand(vec2(-rad), vec2(rad)))),
+					rect(1,1),
+					color(190,10,0),
+					origin("center"),
+					scale(1 * size, 1 * size),
+					grow(rand(47,72) * size),
+					lifespan(0.1),
+				]);
+			}
+		});
+	}
+};
+
+function updatePlayerBlood(bloodPoints) {
+	player.blood += bloodPoints;
+	player.blood = Math.max(player.battery, 0);
+	player.blood = Math.min(player.battery, 100);
+
+	blood.width = 50 * (player.battery / 100);
+
+	if (player.blood < 20) blood.color = rgb(255, 0, 0);
+	else if (player.blood < 50) blood.color = rgb(255, 127, 0);
+
+	if (player.blood <= 0) {
+		destroy(player);
+		for (let i = 0; i < 500; i++) {
+			wait(0.01 * i, () => {
+				makeExplosion(vec2(rand(0, MAP_WIDTH), rand(0,MAP_HEIGHT)), 5, 10, 10);
+				play("bell", {
+					volume: 0.7,
+					detune: rand(-1200, 1200),
+				});
+			});
+		}
+		wait(3, () => {
+			go("endGame", player.score, time + 4);
+			music.pause();
+		})
+	}
+}
 
 });
 
 go("main");
+
+scene("endGame", () => {
+	const MAP_WIDTH = 440;
+	const MAP_HEIGHT = 275;
+
+	layers(["ui", "bg"], "ui");
+
+	add([
+		sprite("gg-vamp"),
+		layer("ui"),
+		scale(1.3),
+	])
+
+	add([
+		text("Game Over", { size: 40, font: "sink" }),
+		pos(MAP_WIDTH/2, MAP_HEIGHT/3),
+		origin("center"),
+		layer("ui")
+	]);
+
+	// add([
+	// 	text(`Score: ${score}`, { size: 40, font: "sink" }),
+	// 	pos((MAP_WIDTH/2 - 5), (MAP_HEIGHT/3 + 45)),
+	// 	origin("center"),
+	// 	layer("ui")
+	// ]);
+
+	// add([
+	// 	text(`Time: ${time}`, { size: 40, font: "sink" }),
+	// 	pos((MAP_WIDTH/2), (MAP_HEIGHT/3 + 90)),
+	// 	origin("center"),
+	// 	layer("ui")
+	// ]);
+
+	add([
+		rect(450, 3),
+		pos((MAP_WIDTH/2 + 85), (MAP_HEIGHT/3 + 20)),
+		origin("center"),
+		layer("ui")
+	]);
+
+	add([
+		text("Press Enter to Play Again!", { size: 30, font: "sink"}),
+		pos((MAP_WIDTH/2 + 155), (MAP_HEIGHT/3 + 270)),
+		origin("center"),
+		layer("ui")
+	]);
+});
+
+// go("endGame")

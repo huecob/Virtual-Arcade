@@ -15,7 +15,7 @@ app.jinja_env.undefined = StrictUndefined
 
 tips = ["Enemies speed up as scores increase! Be careful for the unexpected!",
         "While called so lovingly, Dunderhead can definitely outsmart their foes!",
-        "UFOs are relentless in trying to obtain our precious technology (A.D.), keep them charged and moving.",
+        "UFOs are relentless in trying to obtain our precious technology! Keep A.D. charged and moving.",
         "Collecting health-up items doesn't increase points so it might be a good idea to heal up before moving in for those points!"]
 
 
@@ -31,17 +31,12 @@ def show_homepage():
 
     friendly_tip = random.choice(tips)
 
-    if 'email' not in session:
-        return render_template('homepage.html',user=user, user_name=user_name, highest_score=highest_score, friendly_tip=friendly_tip)
-    else:
-        user = crud.get_user_by_email(session['email'])
-
-        return render_template('homepage.html',user=user, user_name=user_name, highest_score=highest_score, friendly_tip=friendly_tip)
+    return render_template('homepage.html',user=user, user_name=user_name, highest_score=highest_score, friendly_tip=friendly_tip)
     
 @app.route('/log-in')
 def render_login_page():
 
-    return render_template('/login-page')
+    return render_template('/login-page.html')
 
 @app.route('/handle-login', methods=["POST"])
 def login_user():
