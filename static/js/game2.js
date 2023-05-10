@@ -211,7 +211,7 @@ onKeyPress("space", () => {
         "light",
         lifespan(3),
         layer("bg"),
-        area({width: 100, height: 100}),
+        area({width: 120, height: 120}),
         color(255,255,0, 0.025),
     ]),
     play("match", {
@@ -219,11 +219,6 @@ onKeyPress("space", () => {
         detune: rand(-1200,1200)
     })
 });
-
-// onUpdate("torch", "light", (torch, light) => {
-//     torch.pos = player.pos.add(30, -40);
-//     light.pos = player.pos.add(10, -30)
-// })
 
 
 function lifespan(time) {
@@ -237,22 +232,6 @@ function lifespan(time) {
 		}
 	}
 };
-
-onCollide("enemy", "light", (enemy, light) => {
-    if (enemy.direction === directions.LEFT) {
-        enemy.direction = directions.RIGHT;
-    } else if (enemy.direction === directions.RIGHT) {
-        enemy.direction = directions.LEFT;
-    }
-});
-
-onUpdate("enemy", (enemy) => {
-    if (enemy.direction === directions.LEFT) {
-        enemy.move(-100, 0);
-    } else if (enemy.direction === directions.RIGHT) {
-        enemy.move(100, 0);
-    }
-});
 
 let canJump = true;
 let canDoubleJump = true;
@@ -319,6 +298,15 @@ onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
 });
 
+onCollide("light", "enemy", (light, enemy) => {
+    if (enemy.direction == directions.LEFT) {
+        enemy.direction = directions.RIGHT;
+    } else if (enemy.direction == directions.RIGHT) {
+        enemy.direction = directions.LEFT;
+    }
+    enemy.move(-enemy.speedX, -enemy.speedY);
+})
+
 add([
 	text("SCORE: ", { size: 20, font: "sink"}),
 	pos(100, 30),
@@ -364,6 +352,16 @@ const blood = add([
 	layer("ui")
 ])
 
+function grow(rate) {
+	return {
+		update() {
+			const n = rate * dt();
+			this.scale.x += n;
+			this.scale.y += n;
+		}
+	}
+};
+
 function makeExplosion(p, n, rad, size) {
 	for (let i =0; i<n; i++) {
 		wait(rand(n * 0.1), () => {
@@ -384,10 +382,10 @@ function makeExplosion(p, n, rad, size) {
 
 function updatePlayerBlood(bloodPoints) {
 	player.blood += bloodPoints;
-	player.blood = Math.max(player.battery, 0);
-	player.blood = Math.min(player.battery, 100);
+	player.blood = Math.max(player.blood, 0);
+	player.blood = Math.min(player.blood, 100);
 
-	blood.width = 50 * (player.battery / 100);
+	blood.width = 50 * (player.blood / 100);
 
 	if (player.blood < 20) blood.color = rgb(255, 0, 0);
 	else if (player.blood < 50) blood.color = rgb(255, 127, 0);
