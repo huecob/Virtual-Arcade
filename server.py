@@ -22,8 +22,13 @@ def show_homepage():
     else:
         user = crud.get_user_by_email(session['email'])
         return render_template('homepage.html',user=user)
+    
+@app.route('/log-in')
+def render_login_page():
 
-@app.route('/login', methods=["POST"])
+    return render_template('/login-page')
+
+@app.route('/handle-login', methods=["POST"])
 def login_user():
     """This logs the user in"""
 
@@ -55,7 +60,7 @@ def show_profile_search():
 
     target_string = keyword[1:len(keyword) -1]
 
-    if keyword == "search profiles!":
+    if keyword == "Search":
         users = crud.get_users()
         user_data = [(user.user_display_name, user.user_id)for user in users]
         

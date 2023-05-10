@@ -120,7 +120,6 @@ const map = addLevel(
             solid(),
             scale(0.125),
             origin("center"),
-            jumpThru()
         ],
         "-": () => [
             rect(BLOCK_SIZE /10, BLOCK_SIZE),
@@ -208,19 +207,25 @@ onKeyDown("space", () => {
         "light",
         lifespan(0.1),
         layer("bg"),
-        area(),
-        color(255,255,0, 0.025)
+        // area(),
+        color(255,255,0, 0.025),
     ]);
 });
+
+let lastPosY = player.pos.y
+
+
+onCollide("platform", "player", (p) => {
+    if (player.pos.y > lastPosY){
+        player.jump(700)
+    }
+})
+
 
 onKeyRelease("space", () => {
     destroy(torch);
     destroy(light);
 });
-
-// onCollide("enemy", "light", (enemy) => {
-//     enemy.move
-// })
 
 function lifespan(time) {
 	let timer = 0;
@@ -285,6 +290,10 @@ spawnEnemies();
 onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
 });
+
+onCollide("enemy", "light", (enemy, light) => {
+    destroy(enemy)
+})
 
 
 
