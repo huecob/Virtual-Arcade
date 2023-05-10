@@ -3,6 +3,7 @@
 from flask import (Flask, render_template, request, flash, get_flashed_messages, session, redirect, jsonify)
 from datetime import datetime, timedelta
 from model import connect_to_db, db, User, GameSession, Difficulties, GameDifficulty, Game
+import random
 import crud
 import json
 
@@ -12,16 +13,30 @@ app = Flask(__name__)
 app.secret_key = "dev"
 app.jinja_env.undefined = StrictUndefined
 
+tips = ["Enemies speed up as scores increase! Be careful for the unexpected!",
+        "While called so lovingly, Dunderhead can definitely outsmart their foes!",
+        "UFOs are relentless in trying to obtain our precious technology (A.D.), keep them charged and moving.",
+        "Collecting health-up items doesn't increase points so it might be a good idea to heal up before moving in for those points!"]
+
 
 @app.route('/')
 def show_homepage():
     """Landing page"""
 
+    highest_score = crud.get_highest_score()
+    user = highest_score.user_id
+    user_id = crud.get_users_by_id(user)
+
+    user_name = user_id.user_display_name
+
+    friendly_tip = random.choice(tips)
+
     if 'email' not in session:
         return render_template('homepage.html')
     else:
         user = crud.get_user_by_email(session['email'])
-        return render_template('homepage.html',user=user)
+
+        return render_template('homepage.html',user=user, user_name=user_name, highest_score=highest_score, friendly_tip=friendly_tip)
     
 @app.route('/log-in')
 def render_login_page():
