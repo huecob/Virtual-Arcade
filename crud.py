@@ -20,12 +20,33 @@ def create_game(game_title,game_description=""):
 
     return game
 
-def create_session(score,time_played):
+def create_session(session_date, user_id, game_id, score, time_played):
     """Start a session"""
 
-    session = GameSession(score=score, time_played=time_played)
+    session = GameSession(session_date=session_date, 
+                          user_id=user_id, 
+                          game_id=game_id, 
+                          score=score, 
+                          time_played=time_played)
 
     return session
+
+def create_difficulties(difficulty_level_id, difficulty_description=""):
+    """Creates a difficulty"""
+
+    difficulty = Difficulties(difficulty_level_id=difficulty_level_id, 
+                              difficulty_description=difficulty_description)
+
+    return difficulty
+
+def create_game_difficulty(game_difficulty_id, game_id, game_difficulty):
+    """Creates a game difficulty"""
+
+    game_difficulty = GameDifficulty(game_difficulty_id=game_difficulty_id, 
+                                     game_id=game_id, 
+                                     game_difficulty=game_difficulty)
+
+    return game_difficulty
 
 def get_users():
     """Show all users"""
