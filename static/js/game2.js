@@ -11,7 +11,8 @@ loadSprite('stone-platform', 'static/sprites/stone-platform.png')
 loadSprite('torch', '/static/sprites/torch.png')
 loadSprite('fog', '/static/sprites/fog.png')
 loadSprite('gg-vamp','/static/sprites/gg-vamp.png')
-loadSprite('vamp-points', '/static/sprites/vamp-points.png')
+loadSprite('vamp-points', 'static/sprites/vamp-points.png')
+loadSprite('hearts', 'static/sprites/hearts.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
@@ -84,23 +85,23 @@ const map = addLevel(
         "-                                          -",
         "-                                          -",
         "-                                          -",
-        "-          ppp                             -",
-        "-                                          -",
-        "-                       ppp                -",
-        "-                                          -",
-        "-                                          -",
-        "-                                pppp      -",
         "-                                          -",
         "-                                          -",
         "-                                          -",
-        "-                         ppp              -",
-        "-                                          -",
-        "-     pppp                                 -",
         "-                                          -",
         "-                                          -",
-        "-                               pppp       -",
         "-                                          -",
-        "-          pp                              -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
+        "-                                          -",
         "-                                          -",
         "-                                          -",
         "============================================",
@@ -322,7 +323,7 @@ const scoreText = add([
 function updateScore(points) {
 	player.score += points;
 	scoreText.text = player.score.toString().padStart(6,0);
-	play("drink-points", {
+	play("drink", {
 		volume: 0.5,
 		detune: rand(-1200,1200)
 	})
@@ -407,8 +408,8 @@ function updatePlayerBlood(bloodPoints) {
 }
 
 function spawnPoints() {
-    let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
-    add([sprite('vamp-points'), pos(xpos, BLOCK_SIZE), area(), body(), "points"]);
+    let xpos = rand(0, 850);
+    add([sprite('vamp-points'), pos(xpos, 100), scale(0.025), area(), layer("ui"), body(), "points"]);
 }
 
 onUpdate("points", (p) => {
@@ -420,12 +421,20 @@ onUpdate("points", (p) => {
 
 spawnPoints();
 
-const pointsPerThing = 100;
-player.onCollide("points", (p) => {
-    destroy(p);
-    updateScore(pointsPerThing);
-    wait(1, spawnPoints)
-})
+const basepoints = 100;
+
+player.onCollide("points", (points) => {
+    destroy(points);
+    add([
+        sprite("hearts"),
+        pos(player.pos.add(0,-115)),
+        origin("center"),
+        scale(0.15),
+        lifespan(0.1)
+    ]);
+    wait(1,spawnPoints);
+    updateScore(basepoints);
+});
 
 });
 
