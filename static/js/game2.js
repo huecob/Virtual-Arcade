@@ -11,12 +11,14 @@ loadSprite('stone-platform', 'static/sprites/stone-platform.png')
 loadSprite('torch', '/static/sprites/torch.png')
 loadSprite('fog', '/static/sprites/fog.png')
 loadSprite('gg-vamp','/static/sprites/gg-vamp.png')
+loadSprite('vamp-points', '/static/sprites/vamp-points.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
 loadSound('match', '/static/sounds/match.mp3')
 loadSound('ghost-hit', '/static/sounds/ghost-spawn.mp3')
 loadSound('bell','/static/sounds/bell.wav')
+loadSound('drink', '/static/sounds/drink-points.mp3')
 
 scene("main", () => {
 
@@ -299,13 +301,9 @@ onUpdate("enemy", (enemy) => {
 });
 
 onCollide("light", "enemy", (light, enemy) => {
-    if (enemy.direction == directions.LEFT) {
-        enemy.direction = directions.RIGHT;
-    } else if (enemy.direction == directions.RIGHT) {
-        enemy.direction = directions.LEFT;
-    }
-    enemy.move(-enemy.speedX, -enemy.speedY);
-})
+    let dir = light.pos.sub(enemy.pos).unit();
+    enemy.move(dir.scale(-100));
+});
 
 add([
 	text("SCORE: ", { size: 20, font: "sink"}),
@@ -324,7 +322,7 @@ const scoreText = add([
 function updateScore(points) {
 	player.score += points;
 	scoreText.text = player.score.toString().padStart(6,0);
-	play("score", {
+	play("drink-points", {
 		volume: 0.5,
 		detune: rand(-1200,1200)
 	})
@@ -407,6 +405,27 @@ function updatePlayerBlood(bloodPoints) {
 		})
 	}
 }
+
+function spawnPoints() {
+    let xpos = rand(BLOCK_SIZE, MAP_WIDTH - BLOCK_SIZE);
+    add([sprite('vamp-points'), pos(xpos, BLOCK_SIZE), area(), body(), "points"]);
+}
+
+onUpdate("points", (p) => {
+    if (p.pos.y > MAP_HEIGHT) {
+        destroy(p);
+        spawnPoints();
+    }
+})
+
+spawnPoints();
+
+const pointsPerThing = 100;
+player.onCollide("points", (p) => {
+    destroy(p);
+    updateScore(pointsPerThing);
+    wait(1, spawnPoints)
+})
 
 });
 
