@@ -34,7 +34,7 @@ scene("main", () => {
         sprite("bg-night"),
         layer("bg"),
         pos(0, .8),
-        scale(0.58)
+        scale(0.75)
     ]);
 
 
@@ -104,6 +104,12 @@ const map = addLevel(
         "-                                                    -",
         "-                                                    -",
         "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
         "-                                         G          -",
         "-                                                    -",
         "======================================================",
@@ -112,7 +118,7 @@ const map = addLevel(
     {
         width: BLOCK_SIZE,
         height: BLOCK_SIZE,
-        pos: vec2(0,0),
+        pos: vec2(0,-200),
         "=": () => [
             rect(BLOCK_SIZE,BLOCK_SIZE),
             color(120, 70, 35),
@@ -234,12 +240,14 @@ player.onUpdate(() => {
 });
 
 player.onUpdate(() => {
-    // center camera to player
-    const currCam = camPos();
-    if (currCam.x < player.pos.x) {
-      camPos(player.pos.x, currCam.y);
-    }
-  });
+      camPos(player.pos.x, player.pos.y - 125);
+
+      let currentCam = camPos();
+
+      if (currentCam.pos.x <= 0 || currentCam.pos.x >= width()) {
+            camPos(cu)
+      }
+});
 
 function lifespan(time) {
 	let timer = 0;
