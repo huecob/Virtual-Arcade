@@ -12,7 +12,7 @@ loadSprite('stone-platform', 'static/sprites/stone-platform.png')
 loadSprite('torch', '/static/sprites/torch.png')
 loadSprite('fog', '/static/sprites/fog.png')
 loadSprite('gg-vamp','/static/sprites/gg-vamp.png')
-loadSprite('vamp-points', 'static/sprites/vamp-points.png')
+loadSprite('vamp-points', 'static/sprites/vamp-points.webp')
 loadSprite('hearts', 'static/sprites/hearts.png')
 loadSprite('bat-lives', '/static/sprites/bat-lives.png')
 
@@ -33,8 +33,8 @@ scene("main", () => {
     let currentBG = add([
         sprite("bg-night"),
         layer("bg"),
-        pos(0, .8),
-        scale(0.75)
+        pos(0, -300),
+        scale(1)
     ]);
 
 
@@ -240,13 +240,7 @@ player.onUpdate(() => {
 });
 
 player.onUpdate(() => {
-      camPos(player.pos.x, player.pos.y - 125);
-
-      let currentCam = camPos();
-
-      if (currentCam.pos.x <= 0 || currentCam.pos.x >= width()) {
-            camPos(cu)
-      }
+      camPos(player.pos.x, player.pos.y - 225);
 });
 
 function lifespan(time) {
@@ -288,7 +282,7 @@ function spawnEnemies() {
     let xpos = (enemyDirection == directions.LEFT ? MAP_WIDTH/9 : MAP_WIDTH * 3);
 
     const pointsSpeedUp = Math.floor(player.score / 1000);
-    const enemeySpeed = enemyBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
+    const enemySpeed = enemyBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
     const newEnemyInterval = 0.8 - (pointsSpeedUp / 20);
 
     enemy = add([
@@ -301,8 +295,8 @@ function spawnEnemies() {
         z(-1),
         origin("center"),
         {
-            speedX: rand(enemeySpeed * 0.5, 200 * 1.5) * choose([-1,1]),
-			speedY: rand(enemeySpeed * 0.1, 200 * 0.5) * choose([-1,1]),
+            speedX: rand(enemySpeed * 0.5, 200 * 1.5) * choose([-1,1]),
+			speedY: rand(enemySpeed * 0.1, 200 * 0.5) * choose([-1,1]),
 			zpos: 1000,
         }
     ]);
@@ -444,19 +438,55 @@ function updatePlayerHealth(health) {
 	}
 }
 
+// function spawnPoints() {
+//     let xpos = rand(0, 850);
+//     add([sprite('vamp-points'), pos(xpos, 100), scale(0.4), area(), layer("ui"), body(), "points"]);
+// }
+
+// onUpdate("points", (p) => {
+//     if (p.pos.y > MAP_HEIGHT) {
+//         destroy(p);
+//         spawnPoints();
+//     }
+// })
+
+// spawnPoints();
+
+let vampPoints;
+const pointsBaseSpeed = 300;
+const pointsIncSpeed = 60;
+
 function spawnPoints() {
-    let xpos = rand(0, 850);
-    add([sprite('vamp-points'), pos(xpos, 100), scale(0.025), area(), layer("ui"), body(), "points"]);
+    let pointsDirection = choose([directions.LEFT, directions.RIGHT]);
+    let xpos = (pointsDirection == directions.LEFT ? MAP_WIDTH/9 : MAP_WIDTH * 3);
+
+    const pointsSpeedUp = Math.floor(player.score / 1000);
+    const pointsSpeed = pointsBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
+    const newPointsInterval = 2 - (pointsSpeedUp / 20);
+
+    vampPoints = add([
+        sprite('vamp-points'),
+        pos(xpos,rand(0, MAP_HEIGHT-20)),
+        area(),
+        scale(.35),
+        "points",
+        layer("ui"),
+        z(-1),
+        origin("center"),
+        {
+            speedX: rand(pointsSpeed * 0.5, 200 * 1.5) * choose([-1,1]),
+			speedY: rand(pointsSpeed * 0.1, 200 * 0.5) * choose([-1,1]),
+			zpos: 1000,
+        }
+    ]);
+
+    wait(newPointsInterval, spawnPoints);
 }
-
-onUpdate("points", (p) => {
-    if (p.pos.y > MAP_HEIGHT) {
-        destroy(p);
-        spawnPoints();
-    }
-})
-
 spawnPoints();
+
+onUpdate("points", (points) => {
+	points.move(points.speedX, points.speedY);
+});
 
 const basepoints = 100;
 
