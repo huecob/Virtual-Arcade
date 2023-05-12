@@ -1,6 +1,7 @@
 kaboom({
 	height: 600,
 	width: 1000,
+    background: [0,0,0]
 });
 
 loadSprite("vampire", 'static/sprites/vampire.png')
@@ -13,6 +14,7 @@ loadSprite('fog', '/static/sprites/fog.png')
 loadSprite('gg-vamp','/static/sprites/gg-vamp.png')
 loadSprite('vamp-points', 'static/sprites/vamp-points.png')
 loadSprite('hearts', 'static/sprites/hearts.png')
+loadSprite('bat-lives', '/static/sprites/bat-lives.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
@@ -80,32 +82,32 @@ const BLOCK_SIZE = 24;
 
 const map = addLevel(
     [
-        "--------------------------------------------",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "-                                          -",
-        "============================================",
-        "                                            ",
+        "------------------------------------------------------",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                                    -",
+        "-                                         G          -",
+        "-                                                    -",
+        "======================================================",
+        "                                                      ",
     ],
     {
         width: BLOCK_SIZE,
@@ -148,7 +150,7 @@ const player = add([
     "player",
     layer("ui"),
     {
-        blood: 100,
+        health: 3,
         score: 0,
     }
 ])
@@ -205,7 +207,7 @@ onKeyPress("space", () => {
         origin("center"),
         "torch",
         lifespan(3),
-    ])
+    ]);
     light = add([
         circle(100),
         pos(player.pos.add(10,-30)),
@@ -216,13 +218,28 @@ onKeyPress("space", () => {
         layer("bg"),
         area({width: 120, height: 120}),
         color(255,255,0, 0.025),
-    ]),
+    ]);
     play("match", {
         volume:0.5,
         detune: rand(-1200,1200)
-    })
+    });
 });
 
+player.onUpdate(() => {
+
+    if (light || torch) {
+    torch.pos = player.pos.add(30, -40);
+    light.pos = player.pos.add(10,-30);
+    }
+});
+
+player.onUpdate(() => {
+    // center camera to player
+    const currCam = camPos();
+    if (currCam.x < player.pos.x) {
+      camPos(player.pos.x, currCam.y);
+    }
+  });
 
 function lifespan(time) {
 	let timer = 0;
@@ -286,6 +303,7 @@ function spawnEnemies() {
 }
 spawnEnemies();
 
+
 onCollide("player", "enemy", (player, enemy) => {
     shake(20);
     makeExplosion(enemy.pos, 8,8,8);
@@ -294,16 +312,11 @@ onCollide("player", "enemy", (player, enemy) => {
         volume: 0.5,
         detune: rand(-1200,1200)
     })
-    updatePlayerBlood(-20)
+    updatePlayerHealth(-1)
 })
 
 onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
-});
-
-onCollide("light", "enemy", (light, enemy) => {
-    let dir = light.pos.sub(enemy.pos).unit();
-    enemy.move(dir.scale(-100));
 });
 
 add([
@@ -330,25 +343,37 @@ function updateScore(points) {
 };
 
 add([
-	text("Blood: ", { size: 20, font: "sink"}),
+	text("Lives", { size: 20, font: "sink"}),
 	pos(290, 30),
 	origin("center"),
 	layer("ui")
 ]);
 
-add([
-	rect(100, 12),
-	pos(280,50),
-	color(100, 100, 100),
-	origin("center"),
-	layer("ui")
+const batlife1 = add([
+    sprite('bat-lives'),
+    origin("center"),
+    scale(0.075),
+    layer("ui"),
+    'bat-lives1',
+    pos(180 + 75 ,  65)
 ]);
 
-const blood = add([
-	rect(90, 6),
-	pos(235, 46.5),
-	color(170, 10, 0),
-	layer("ui")
+const batlife2 = add([
+    sprite('bat-lives'),
+    origin("center"),
+    scale(0.075),
+    layer("ui"),
+    'bat-lives$2',
+    pos(180 + ( 2 * 75 ),  65)
+])
+
+const batlife3 = add([
+    sprite('bat-lives'),
+    origin("center"),
+    scale(0.075),
+    layer("ui"),
+    'bat-lives3',
+    pos(180 + ( 3 * 75 ),  65)
 ])
 
 function grow(rate) {
@@ -379,19 +404,23 @@ function makeExplosion(p, n, rad, size) {
 	}
 };
 
-function updatePlayerBlood(bloodPoints) {
-	player.blood += bloodPoints;
-	player.blood = Math.max(player.blood, 0);
-	player.blood = Math.min(player.blood, 100);
 
-	blood.width = 50 * (player.blood / 100);
+function updatePlayerHealth(health) {
+    player.health += health;
+    player.heatlh = Math.max(player.health, 0);
+    player.health = Math.min(player.health, 3);
 
-	if (player.blood < 20) blood.color = rgb(255, 0, 0);
-	else if (player.blood < 50) blood.color = rgb(255, 127, 0);
+    if (player.health === 2) {
+        destroy(batlife3);
+    } else if (player.health === 1) {
+        destroy(batlife2);
+    } else if (player.health === 0) {
+        destroy(batlife1);
+    }
 
-	if (player.blood <= 0) {
-		destroy(player);
-		for (let i = 0; i < 500; i++) {
+    if (player.heatlh <= 0) {
+        destroy(player)
+        for (let i = 0; i < 500; i++) {
 			wait(0.01 * i, () => {
 				makeExplosion(vec2(rand(0, MAP_WIDTH), rand(0,MAP_HEIGHT)), 5, 10, 10);
 				play("bell", {
