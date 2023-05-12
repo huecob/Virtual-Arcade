@@ -15,6 +15,7 @@ loadSprite('gg-vamp','/static/sprites/gg-vamp.png')
 loadSprite('vamp-points', 'static/sprites/vamp-points.webp')
 loadSprite('hearts', 'static/sprites/hearts.png')
 loadSprite('bat-lives', '/static/sprites/bat-lives.png')
+loadSprite('wincon', '/static/sprites/vamp-wincon.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
@@ -22,10 +23,14 @@ loadSound('match', '/static/sounds/match.mp3')
 loadSound('ghost-hit', '/static/sounds/ghost-spawn.mp3')
 loadSound('bell','/static/sounds/bell.wav')
 loadSound('drink', '/static/sounds/drink-points.mp3')
+loadSound('startmusic', '/static/sounds/game2startmusic.mp3')
+loadSound('bat-noise', '/static/sounds/bat-noise.mp3')
 
 scene("main", () => {
 
-    let music = play('game2-theme');
+    let music = play('game2-theme', {
+        volume: 0.6
+    });
     music.loop();
 
     layers(["bg", "ui", "obj"], "obj");
@@ -38,16 +43,17 @@ scene("main", () => {
     ]);
 
 
-    let time = 135
-
+    let time = 135;
+    let winconSpawned = false;
+    
     add([
         text(" seconds until sunrise...", {size: 20, font: "sink"}),
         pos(800, 35),
         origin("center"),
         layer("ui"),
         z(1)
-    ])
-
+    ]);
+    
     const timeText = add([
         text(`${time}`, {size: 20, font: "sink"}),
         pos(600,35),
@@ -57,22 +63,45 @@ scene("main", () => {
         z(1)
     ]);
 
+    let wincon
+    
     function countDown() {
         time -= 1;
         timeText.text = `${time}`;
-
-        if (time <= 30) {
+    
+        if (time === 130 && !winconSpawned) {
             currentBG =
             add([
                 sprite('bg-day'),
-                pos(0,-15),
-                scale(0.5),
+                pos(0,-350),
+                scale(1),
                 layer("bg")
-            ])
+            ]);
+    
+            wincon = add([
+                sprite('wincon'),
+                pos(0,200),
+                area(),
+                body(),
+                scale(0.25),
+                "wincon",
+                z(2),
+                layer('ui'),
+                {
+                    speed: 1
+                }
+            ]);
+    
+            winconSpawned = true;
         }
     }
+    
+    loop(1, countDown);
 
-loop(1, countDown)
+
+onUpdate("wincon", (wincon) => {
+    wincon.move(0,wincon.speed);
+})
 
 //graveyard map
 
@@ -82,38 +111,38 @@ const BLOCK_SIZE = 24;
 
 const map = addLevel(
     [
-        "------------------------------------------------------",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                                    -",
-        "-                                         G          -",
-        "-                                                    -",
-        "======================================================",
-        "                                                      ",
+        "--------------------------------------------------------------------------------",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                              -",
+        "-                                                                    G         -",
+        "-                                                                              -",
+        "================================================================================",
+        "                                                                                ",
     ],
     {
         width: BLOCK_SIZE,
@@ -317,6 +346,19 @@ onCollide("player", "enemy", (player, enemy) => {
     updatePlayerHealth(-1)
 })
 
+enemy.onCollide("points", (points) => {
+    destroy(points);
+    add([
+        sprite("hearts"),
+        pos(player.pos.add(0,-115)),
+        origin("center"),
+        scale(0.15),
+        lifespan(0.1)
+    ]);
+    wait(1,spawnPoints);
+    updateScore(basepoints);
+});
+
 onUpdate("enemy", (enemy) => {
 	enemy.move(enemy.speedX, enemy.speedY);
 });
@@ -426,8 +468,8 @@ function updatePlayerHealth(health) {
 			wait(0.01 * i, () => {
 				makeExplosion(vec2(rand(0, MAP_WIDTH), rand(0,MAP_HEIGHT)), 5, 10, 10);
 				play("bell", {
-					volume: 0.7,
-					detune: rand(-1200, 1200),
+					volume: 0.3,
+                    speed: 0.5
 				});
 			});
 		}
@@ -438,20 +480,6 @@ function updatePlayerHealth(health) {
 	}
 }
 
-// function spawnPoints() {
-//     let xpos = rand(0, 850);
-//     add([sprite('vamp-points'), pos(xpos, 100), scale(0.4), area(), layer("ui"), body(), "points"]);
-// }
-
-// onUpdate("points", (p) => {
-//     if (p.pos.y > MAP_HEIGHT) {
-//         destroy(p);
-//         spawnPoints();
-//     }
-// })
-
-// spawnPoints();
-
 let vampPoints;
 const pointsBaseSpeed = 300;
 const pointsIncSpeed = 60;
@@ -461,7 +489,7 @@ function spawnPoints() {
     let xpos = (pointsDirection == directions.LEFT ? MAP_WIDTH/9 : MAP_WIDTH * 3);
 
     const pointsSpeedUp = Math.floor(player.score / 1000);
-    const pointsSpeed = pointsBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
+    const pointsSpeed = pointsBaseSpeed + (pointsSpeedUp * pointsIncSpeed);
     const newPointsInterval = 2 - (pointsSpeedUp / 20);
 
     vampPoints = add([
@@ -479,7 +507,10 @@ function spawnPoints() {
 			zpos: 1000,
         }
     ]);
-
+    play('bat-noise', {
+        volume: 0.5,
+        detune: rand(-1200,1200)
+    })
     wait(newPointsInterval, spawnPoints);
 }
 spawnPoints();
@@ -502,6 +533,16 @@ player.onCollide("points", (points) => {
     wait(1,spawnPoints);
     updateScore(basepoints);
 });
+
+onCollide("player", "wincon", (player, wincon) => {
+	makeExplosion(vec2(rand(0, MAP_WIDTH), rand(0,MAP_HEIGHT)), 5, 10, 10);
+	play("bell", {
+		volume: 0.3,
+        speed: 0.5
+	});
+    music.pause();
+    wait(3, go("endGame"));
+})
 
 });
 
