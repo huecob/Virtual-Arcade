@@ -16,6 +16,8 @@ loadSprite('vamp-points', 'static/sprites/vamp-points.webp')
 loadSprite('hearts', 'static/sprites/hearts.png')
 loadSprite('bat-lives', '/static/sprites/bat-lives.png')
 loadSprite('wincon', '/static/sprites/vamp-wincon.png')
+loadSprite('daytime-effect', '/static/sprites/daytime-effect.png')
+loadSprite('game2-bg', 'static/sprites/game2-bg.png')
 
 loadSound('game2-theme', '/static/sounds/game2-theme.mp3')
 loadSound('flashlight-click', '/static/sounds/flashlight-click.wav')
@@ -25,6 +27,27 @@ loadSound('bell','/static/sounds/bell.wav')
 loadSound('drink', '/static/sounds/drink-points.mp3')
 loadSound('startmusic', '/static/sounds/game2startmusic.mp3')
 loadSound('bat-noise', '/static/sounds/bat-noise.mp3')
+
+scene("start", () => {
+
+    let music = play('startmusic', {
+        volume: 0.6
+    });
+    music.loop();
+
+    layers(['bg','ui','obj', 'obj']);
+
+    add([
+        sprite('game2-bg'),
+        scale(1.55),
+        layer("ui"),
+        origin("center"),
+        pos(500, 200),
+    ])
+
+})
+
+go("start")
 
 scene("main", () => {
 
@@ -77,7 +100,6 @@ scene("main", () => {
                 scale(1),
                 layer("bg")
             ]);
-    
             wincon = add([
                 sprite('wincon'),
                 pos(0,200),
@@ -91,7 +113,6 @@ scene("main", () => {
                     speed: 1
                 }
             ]);
-    
             winconSpawned = true;
         }
     }
@@ -194,7 +215,7 @@ const fog = add([
     sprite("fog"),
     layer("ui"),
     origin("center"),
-    scale(10),
+    scale(8),
     pos(player.pos),
   ]);
 
@@ -233,8 +254,14 @@ onKeyRelease("right", () => {
 
 let torch;
 let light;
+let gearOut = false;
+
+function gearDelay() {
+    gearOut = false;
+}
 
 onKeyPress("space", () => {
+if (gearOut == false) {
    torch = add([
         sprite("torch"),
         pos(player.pos.add(30, -40)),
@@ -251,13 +278,16 @@ onKeyPress("space", () => {
         "light",
         lifespan(3),
         layer("bg"),
-        area({width: 150, height: 150}),
+        area({width: 100, height: 100 }),
         color(255,255,0, 0.025),
     ]);
     play("match", {
         volume:0.5,
         detune: rand(-1200,1200)
-    });
+    })
+    gearOut = true;
+}
+wait(6, gearDelay);
 });
 
 player.onUpdate(() => {
@@ -267,16 +297,13 @@ player.onUpdate(() => {
     }
 });
 
-onCollide("enemy", "light", (enemy) => {
-    if (enemy.pos.x >= (width() / 2)) {
-        enemy.move(enemyBaseSpeed, enemyBaseSpeed)
-    } else if (enemy.pos.x <= (width() /2)) {
-        enemy.move(-enemyBaseSpeed, -enemyBaseSpeed)
-    }
+onCollide("light", "enemy", (enemy, light) => {
+    destroy(light);
+    destroy(enemy);
 })
 
 player.onUpdate(() => {
-      camPos(player.pos.x, player.pos.y - 225);
+      camPos(player.pos.x, player.pos.y - 220);
 });
 
 function lifespan(time) {
@@ -315,7 +342,7 @@ let enemy;
 
 function spawnEnemies() {
     let enemyDirection = choose([directions.LEFT, directions.RIGHT]);
-    let xpos = (enemyDirection == directions.LEFT ? MAP_WIDTH/9 : MAP_WIDTH * 3);
+    let xpos = (enemyDirection == directions.LEFT ? width() /9 : width() * 3);
 
     const pointsSpeedUp = Math.floor(player.score / 1000);
     const enemySpeed = enemyBaseSpeed + (pointsSpeedUp * enemyIncSpeed);
@@ -323,8 +350,8 @@ function spawnEnemies() {
 
     enemy = add([
         sprite('ghost'),
-        pos(xpos,rand(0, MAP_HEIGHT-20)),
-        area(),
+        pos(xpos,rand(0, height()-20)),
+        area({ width: 10, height: 10 }),
         scale(.25),
         "enemy",
         layer("ui"),
@@ -362,7 +389,7 @@ enemy.onCollide("points", (points) => {
         scale(0.15),
         lifespan(0.1)
     ]);
-    wait(1,spawnPoints);
+    wait(3,spawnPoints);
     updateScore(basepoints);
 });
 
@@ -395,10 +422,18 @@ function updateScore(points) {
 
 add([
 	text("Lives", { size: 20, font: "sink"}),
-	pos(290, 30),
+	pos(328, 25),
 	origin("center"),
 	layer("ui")
 ]);
+
+const batholder = add([
+    rect(225, 50),
+    layer('ui'),
+    pos(331,65),
+    color(255,255,255),
+    origin("center"),
+])
 
 const batlife1 = add([
     sprite('bat-lives'),
@@ -456,6 +491,7 @@ function makeExplosion(p, n, rad, size) {
 };
 
 
+
 function updatePlayerHealth(health) {
     player.health += health;
     player.heatlh = Math.max(player.health, 0);
@@ -480,7 +516,7 @@ function updatePlayerHealth(health) {
 				});
 			});
 		}
-		wait(3, () => {
+		wait(2, () => {
 			go("endGame", player.score, time + 4);
 			music.pause();
 		})
@@ -502,7 +538,7 @@ function spawnPoints() {
     vampPoints = add([
         sprite('vamp-points'),
         pos(xpos,rand(0, MAP_HEIGHT-20)),
-        area(),
+        area({ width: 10, height: 10 }),
         scale(.35),
         "points",
         layer("ui"),
@@ -537,7 +573,7 @@ player.onCollide("points", (points) => {
         scale(0.15),
         lifespan(0.1)
     ]);
-    wait(1,spawnPoints);
+    wait(3,spawnPoints);
     updateScore(basepoints);
 });
 
@@ -548,14 +584,16 @@ onCollide("player", "wincon", (player, wincon) => {
         speed: 0.5
 	});
     music.pause();
-    wait(5, go("endGame"));
+    wait(2, () => {
+        go("endGame", player.score, time + 4)
+    })
 })
 
 });
 
-go("main");
+// go("main");
 
-scene("endGame", () => {
+scene("endGame", (score, time) => {
 	const MAP_WIDTH = 440;
 	const MAP_HEIGHT = 275;
 
@@ -574,19 +612,19 @@ scene("endGame", () => {
 		layer("ui")
 	]);
 
-	// add([
-	// 	text(`Score: ${score}`, { size: 40, font: "sink" }),
-	// 	pos((MAP_WIDTH/2 - 5), (MAP_HEIGHT/3 + 45)),
-	// 	origin("center"),
-	// 	layer("ui")
-	// ]);
+	add([
+		text(`Score: ${score}`, { size: 40, font: "sink" }),
+		pos((MAP_WIDTH/2 - 5), (MAP_HEIGHT/3 + 45)),
+		origin("center"),
+		layer("ui")
+	]);
 
-	// add([
-	// 	text(`Time: ${time}`, { size: 40, font: "sink" }),
-	// 	pos((MAP_WIDTH/2), (MAP_HEIGHT/3 + 90)),
-	// 	origin("center"),
-	// 	layer("ui")
-	// ]);
+	add([
+		text(`Time: ${time}`, { size: 40, font: "sink" }),
+		pos((MAP_WIDTH/2), (MAP_HEIGHT/3 + 90)),
+		origin("center"),
+		layer("ui")
+	]);
 
 	add([
 		rect(450, 3),
@@ -601,6 +639,22 @@ scene("endGame", () => {
 		origin("center"),
 		layer("ui")
 	]);
+
+    const formInputs = {
+        userScore: score,
+        game_id: 2,
+        seconds: time,
+    }
+    
+    fetch('/scores', {
+        method: 'POST',
+        body: JSON.stringify(formInputs),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
 });
 
 // go("endGame")
