@@ -69,7 +69,7 @@ scene("main", () => {
         time -= 1;
         timeText.text = `${time}`;
     
-        if (time === 130 && !winconSpawned) {
+        if (time === 30 && !winconSpawned) {
             currentBG =
             add([
                 sprite('bg-day'),
@@ -125,21 +125,21 @@ const map = addLevel(
         "-                                                                              -",
         "-                                                                              -",
         "-                                                                              -",
+        "-                                                                pppppp        -",
+        "-                                                                              -",
+        "-                   ppppp                                                      -",
+        "-                                           pppppp                             -",
         "-                                                                              -",
         "-                                                                              -",
         "-                                                                              -",
+        "-                                                              pppp            -",
+        "-                                                                              -",
+        "-          ppp                                 ppppp                           -",
+        "-                                                                              -",
+        "-                       ppp                                                    -",
         "-                                                                              -",
         "-                                                                              -",
         "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                              -",
-        "-                                                                    G         -",
         "-                                                                              -",
         "================================================================================",
         "                                                                                ",
@@ -150,7 +150,7 @@ const map = addLevel(
         pos: vec2(0,-200),
         "=": () => [
             rect(BLOCK_SIZE,BLOCK_SIZE),
-            color(120, 70, 35),
+            color(0,0,0),
             "ground",
             area(),
             scale(1),
@@ -251,7 +251,7 @@ onKeyPress("space", () => {
         "light",
         lifespan(3),
         layer("bg"),
-        area({width: 120, height: 120}),
+        area({width: 150, height: 150}),
         color(255,255,0, 0.025),
     ]);
     play("match", {
@@ -261,12 +261,19 @@ onKeyPress("space", () => {
 });
 
 player.onUpdate(() => {
-
     if (light || torch) {
     torch.pos = player.pos.add(30, -40);
     light.pos = player.pos.add(10,-30);
     }
 });
+
+onCollide("enemy", "light", (enemy) => {
+    if (enemy.pos.x >= (width() / 2)) {
+        enemy.move(enemyBaseSpeed, enemyBaseSpeed)
+    } else if (enemy.pos.x <= (width() /2)) {
+        enemy.move(-enemyBaseSpeed, -enemyBaseSpeed)
+    }
+})
 
 player.onUpdate(() => {
       camPos(player.pos.x, player.pos.y - 225);
@@ -541,7 +548,7 @@ onCollide("player", "wincon", (player, wincon) => {
         speed: 0.5
 	});
     music.pause();
-    wait(3, go("endGame"));
+    wait(5, go("endGame"));
 })
 
 });
