@@ -35,7 +35,7 @@ scene("start", () => {
     });
     music.loop();
 
-    layers(['bg','ui','obj', 'obj']);
+    layers(['bg','ui','obj'], 'obj');
 
     add([
         sprite('game2-bg'),
@@ -44,6 +44,67 @@ scene("start", () => {
         origin("center"),
         pos(500, 200),
     ])
+
+    const titleTxt = add([
+        text("Sundown till Sunrise.", {size: 40, font: "sink"}),
+        pos(520, 130),
+        origin("center"),
+        // layer("ui"),
+    ]);
+
+    const fog = add([
+        sprite("fog"),
+        layer("ui"),
+        origin("center"),
+        scale(8),
+        pos(titleTxt.pos),
+      ]);
+
+    add([
+        text("Start Game?", {size: 20, font: "sink"}),
+        pos(320, 250),
+        origin("center"),
+        layer("ui"),
+        z(1)
+    ]);
+
+    const startButton = add([
+        rect(200,50),
+        pos(320, 250),
+        origin("center"),
+        layer("ui"),
+        color(0,0,0),
+        area(),
+        "start-button"
+    ]);
+
+    const ctrlTxt = add([
+        text("Controls", {size: 20, font: "sink"}),
+        pos(665, 250),
+        origin("center"),
+    ]);
+
+    const ctrlButton = add([
+        rect(200,50),
+        pos(665, 250),
+        origin("center"),
+        color(0,0,0),
+        area(),
+        "controls-button",
+        layer('ui')
+    ]);
+
+onClick("controls-button", () => {
+    add([
+            text("test", {size: 20, font: "sink"}),
+            pos(625, 300),
+            origin("center"),
+    ]);
+});
+
+onClick("start-button", () => {
+    wait(1,go("main"))
+})
 
 })
 
