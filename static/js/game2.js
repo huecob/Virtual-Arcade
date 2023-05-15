@@ -27,6 +27,7 @@ loadSound('bell','/static/sounds/bell.wav')
 loadSound('drink', '/static/sounds/drink-points.mp3')
 loadSound('startmusic', '/static/sounds/game2startmusic.mp3')
 loadSound('bat-noise', '/static/sounds/bat-noise.mp3')
+loadSound('game2-startbutton', 'static/sounds/game2-startbutton.mp3')
 
 scene("start", () => {
 
@@ -96,15 +97,31 @@ scene("start", () => {
 
 onClick("controls-button", () => {
     add([
-            text("test", {size: 20, font: "sink"}),
-            pos(625, 300),
+            text("MOVEMENT \n  [arrow keys]", {size: 20, font: "sink"}),
+            pos(645, 300),
             origin("center"),
     ]);
+    add([
+        text("JUMP \n[up key] *twice", {size: 20, font: "sink"}),
+        pos(570, 355),
+        origin("left"),
+]);
+add([
+    text("TORCH \n[space key]", {size: 20, font: "sink"}),
+    pos(570, 410),
+    origin("left"),
+]);
+
 });
 
 onClick("start-button", () => {
+    play('game2-startbutton', {
+        volume: 0.5,
+        detune: (-1200,1200)
+    });
     wait(1,go("main"))
-})
+    music.pause();
+});
 
 })
 
