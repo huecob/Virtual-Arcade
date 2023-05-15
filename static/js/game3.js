@@ -1,7 +1,7 @@
 kaboom({
 	height: 600,
 	width: 1000,
-    background: [128,128,128]
+    background: [0,0,0]
 });
 
 loadSprite('game3-bg1', 'static/sprites/game3-bg1.png')
@@ -9,10 +9,70 @@ loadSprite('game3-bg2', 'static/sprites/game3-bg2.png')
 loadSprite('game3-bg3', 'static/sprites/game3-bg3.png')
 loadSprite('game3-bg4', 'static/sprites/game3-bg4.png')
 loadSprite('game3-bg5', 'static/sprites/game3-bg5.png')
+loadSprite('speech-bubble', 'static/sprites/speech-bubble.png')
+loadSprite('sleeping-emoji','static/sprites/Sleeping Emoji.png')
 
 loadSprite('player', 'static/sprites/game3-player.png')
 
+loadSound('alarm-sound', 'static/sounds/alarm-sound.wav')
+loadSound('die-forelle', 'static/sounds/die-forelle.mp3')
+loadSound('reverie', 'static/sounds/Debussy - Rêverie.mp3')
+
+scene("start", () => {
+
+    const music = play('reverie', {
+        volume: 0.5
+    });
+    music.loop();
+
+    layers(["bg","ui"], "ui");
+
+    add([
+        text("Hit Snooze", { size: 50}),
+        pos(width()/2,height()/4),
+        origin("center"),
+        layer("ui")
+        ]);
+
+    	add([
+            text("Press enter to start\n(to hit snooze)", { size: 24 }),
+            pos(width()/2, height()/2),
+            origin("center"),
+            color(255, 255, 255),
+            layer("ui")
+        ]);
+
+    function spawnEffect() {
+        let xpos = rand(0,width());
+        add([sprite("sleeping-emoji"), pos(xpos, 0), area(), scale(0.3), "effect", layer("bg"),
+            {
+                speed: rand(40, 100) 
+            }
+        ])
+    };
+    spawnEffect();
+    loop(3,spawnEffect)
+
+        onUpdate("effect", (effect) => {
+            effect.move(0, effect.speed);
+            if (effect.speed.y - effect.height > height()) {
+                destroy(effect)
+        }});
+
+    onKeyDown("enter", () => {
+        music.pause();
+        go("main");
+    });
+
+})
+go("start")
+
 scene("main", () => {
+
+    const music = play('die-forelle', {
+        volume: 0.5,
+    });
+    music.loop();
 
 layers(["bg", "ui", "obj"], "obj");
 
@@ -193,7 +253,7 @@ function destroyRandomTile() {
     const tiles = get("tile");
 
     if (tiles.length === 0) {
-        return;
+        responsibilitySpeed = 150
     }
 
     const randomTile = tiles[Math.floor(Math.random() * tiles.length)];
@@ -281,7 +341,13 @@ add([
         time -= 1;
         timeText.text = `${time}`;
     
-        if (time === 30) {
+        if (time === 0) {
+            player('alarm-sound', {
+                volume:0.5,
+                detune: rand(-1200,1200)
+            });
+            music.pause();
+            go("end", player.score)
         }
     }
     loop(1, countDown);
@@ -289,11 +355,6 @@ add([
 const POINTS = 100;
 
 function updateScore(points) {
-
-    if (player.score === 0) {
-        player.score = 0;
-        return;
-    }
 
     player.score += points;
     scoreText.text = player.score.toString().padStart(6,0);
@@ -313,7 +374,7 @@ const scoreText = add([
 ]);
 
 add([
-    text("Score", {size: 20}),
+    text("Fulfillment", {size: 20}),
     pos(100, 35),
     origin("center"),
     layer("ui")
@@ -324,8 +385,73 @@ player.onCollide("points", (points) => {
     updateScore(POINTS);
 });
 
-onUpdate()
-
 });
 
-go("main");
+// go("main");
+
+scene("end", (score) => {
+
+    layers(["bg", "ui"], "ui");
+
+    const morningAffirmations = [
+        "I woke up on the right side of the bed!",
+        "I had the nicest dream...",
+        "Having a good day aren't ya?",
+        "Best day ever!"
+    ]
+
+    const morningComplaints = [
+        "Ugh... ",
+        "Gonna need a cup of joe... or three...",
+        "*Hit Snooze*",
+        "Not today...",
+        "... "
+    ]
+
+    add([
+		text("Time to wake up...", { size: 40 }),
+		pos(width()/2,height()/2 - 150),
+		origin("center"),
+		layer("ui")
+	]);
+
+    add([
+		text(`Mood today: ${score}`, { size: 35 }),
+		pos(width()/2,height()/2 -100),
+		origin("center"),
+		layer("ui")
+	]);
+
+    add([
+        text(choose(morningAffirmations), { size: 20 }),
+        pos(width()/2,height()/2 + 170),
+        origin("center"),
+        layer("ui")
+    ]);
+
+    const player = add([
+        sprite('player'),
+        pos(500,535),
+        origin("center"),
+        scale(.5),
+    ]);
+
+    const formInputs = {
+        userScore: score,
+        game_id: 3,
+        seconds: 130,
+    }
+    
+    fetch('/scores', {
+        method: 'POST',
+        body: JSON.stringify(formInputs),
+        headers: {
+            'Content-Type': 'application/json'
+        },
+    })
+    .then(response => response.json())
+    .then(data => console.log(data.message))
+
+})
+
+// go("end")
