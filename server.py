@@ -201,6 +201,12 @@ def play_game2():
 
     return render_template('game-page-2.html')
 
+@app.route('/game-3')
+def play_game3():
+    """Let's play game 3!"""
+
+    return render_template('game-page-3.html')
+
 @app.route('/user-metrics/<user_id>')
 def deliver_user_metrics(user_id):
     """Deliver metrics"""

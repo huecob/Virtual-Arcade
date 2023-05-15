@@ -297,10 +297,6 @@ const fog = add([
     pos(player.pos),
   ]);
 
-player.onUpdate(() => {
-    fog.pos = player.pos;
-});
-
 const directions = {
 	LEFT: "left",
 	RIGHT: "right",
@@ -356,7 +352,7 @@ if (gearOut == false) {
         "light",
         lifespan(3),
         layer("bg"),
-        area({width: 100, height: 100 }),
+        area({width: 150, height: 150 }),
         color(255,255,0, 0.025),
     ]);
     play("match", {
@@ -369,16 +365,15 @@ wait(6, gearDelay);
 });
 
 player.onUpdate(() => {
+    fog.pos = player.pos;
+});
+
+player.onUpdate(() => {
     if (light || torch) {
     torch.pos = player.pos.add(30, -40);
     light.pos = player.pos.add(10,-30);
     }
 });
-
-onCollide("light", "enemy", (enemy, light) => {
-    destroy(light);
-    destroy(enemy);
-})
 
 player.onUpdate(() => {
       camPos(player.pos.x, player.pos.y - 220);
@@ -445,6 +440,10 @@ function spawnEnemies() {
     wait(newEnemyInterval, spawnEnemies);
 }
 spawnEnemies();
+
+enemy.onCollide("light", (light) => {
+    destroy(enemy);
+})
 
 
 onCollide("player", "enemy", (player, enemy) => {
@@ -613,7 +612,7 @@ function spawnPoints() {
     const pointsSpeed = pointsBaseSpeed + (pointsSpeedUp * pointsIncSpeed);
     const newPointsInterval = 2 - (pointsSpeedUp / 20);
 
-    vampPoints = add([
+    points = add([
         sprite('vamp-points'),
         pos(xpos,rand(0, MAP_HEIGHT-20)),
         area({ width: 10, height: 10 }),
