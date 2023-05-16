@@ -2,8 +2,14 @@
 
 {% block profile %}
 
+<video autoplay loop muted playsinline id="bgvid">
+    <source src="static/css/wallpaper.mp4" type="video/mp4">
+  </video>
 
-<h1 id="new-name">{{ user.user_display_name }}'s Profile!</h1><br>
+<div class="center">
+    <h1 id="new-name">{{ user.user_display_name }}'s Profile!</h1>
+</div> 
+<br>
 <div id="user-high-score">HIGHEST SCORE: {{ score }}</div><br>
 Update Display Name: 
 <button class="update-display-name" id={{ user.user_id }}> Edit Name </button>

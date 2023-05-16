@@ -28,7 +28,7 @@ scene("start", () => {
     layers(["bg","ui"], "ui");
 
     add([
-        text("Hit Snooze", { size: 50}),
+        text("Responsibility Rain", { size: 50}),
         pos(width()/2,height()/4),
         origin("center"),
         layer("ui")

@@ -1,0 +1,40 @@
+.center {
+    margin-top: 30px;
+    text-align: center;
+    color: white;
+}
+
+.footer {
+    margin-top: 150px;
+    color: white;
+}
+
+.text-left {
+    margin-left: 430px;
+    color: white;
+}
+
+#bgvid {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: -1;
+    color:white;
+  }
+
+.text-white {
+    color: white;
+}
+  
+  
+  
+  
+  
+  
+  
+
