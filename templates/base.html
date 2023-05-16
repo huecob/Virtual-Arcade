@@ -61,6 +61,10 @@
                 <li class="nav-item active">
                   <a class="nav-link" href="https://discord.gg/nGYYXgKf" target="_blank">Join Discord!<span class="sr-only">(current)</span></a>
                 </li>
+
+                <li class="nav-item active">
+                  <a class="nav-link" href="about-author" target="_blank">About Author<span class="sr-only">(current)</span></a>
+                </li>
                 {% endif %}
               </ul>
               <form class="form-inline my-2 my-lg-0" method="GET" name="profile-search" action="/profile/search">
@@ -81,6 +85,7 @@
         {% block registration %}{% endblock %}
         {% block after_body %}{% endblock %}
         {% block login %}{% endblock %}
+        {% block aboutme %}{% endblock %}
 
         <video autoplay loop muted playsinline id="bgvid">
           <source src="static/css/wallpaper.mp4" type="video/mp4">

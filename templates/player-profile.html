@@ -2,10 +2,6 @@
 
 {% block profile %}
 
-<video autoplay loop muted playsinline id="bgvid">
-    <source src="static/css/wallpaper.mp4" type="video/mp4">
-  </video>
-
 <div class="center">
     <h1 id="new-name">{{ user.user_display_name }}'s Profile!</h1>
 </div> 
@@ -24,6 +20,6 @@ Update Display Name:
 
 
 
-<script src="/static/js/player-metrics.js"></script>
+<!-- <script src="/static/js/player-metrics.js"></script> -->
 <script src="/static/js/display-name-update.js"></script>
 {% endblock %}

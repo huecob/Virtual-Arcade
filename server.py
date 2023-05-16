@@ -263,6 +263,12 @@ def deliver_game_specific_user_metrics(user_id):
                     'game_data': specific_game_data,
                     'date_labels': date_labels})
 
+@app.route('/about-author')
+def show_about_me():
+    """Author Page"""
+
+    return render_template('about-me.html')
+
 #"number_of_games": total_num_of_games
 #"games_live": games,
 #"game_ids": game_ids

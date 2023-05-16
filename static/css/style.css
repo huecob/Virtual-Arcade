@@ -30,6 +30,23 @@
 .text-white {
     color: white;
 }
+
+.container {
+    display: inline-block;
+  }
+
+.game-window {
+    display: block;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.game-summary {
+    position: absolute;
+    top: 115px;
+    right: 350px;
+    color: white;
+}
   
   
   
