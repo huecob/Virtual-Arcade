@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %} Project v1 {% endblock %}
+{% block title %} home {% endblock %}
 
 {% block body %}
 
@@ -13,10 +13,16 @@
   </div>
     {% endif %}
     {% endwith %}
-  
-  <div class="center">
-    REIGNING CHAMPION: {{user_name}} with a score of {{highest_score.score}}
-  </div><br>
+
+    <!-- <div class="center"></div> -->
+
+  <div class="container">
+    <div class="col offset-7">
+      <div class="row align-items-center text-white">
+      REIGNING CHAMPION: {{user_name}} with a score of {{highest_score.score}}
+      </div>
+    </div>
+  </div>
 
   <marquee>
     <div class="text-white">

@@ -37,14 +37,13 @@
 
 .game-window {
     display: block;
-    margin: 0 auto;
     max-width: 800px;
 }
 
 .game-summary {
     position: absolute;
     top: 115px;
-    right: 350px;
+    left: 1015px;
     color: white;
 }
   

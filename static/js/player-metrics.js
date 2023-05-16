@@ -11,6 +11,9 @@ const username = serverData["display_name"]
 const labels = serverData["date_labels"]
 const scores = serverData["score_values"]
 
+// console.log(labels)
+// console.log(scores)
+
 
 const totalChart = new Chart(
     document.querySelector('#totals-chart'),
@@ -48,6 +51,7 @@ const score_data = [];
 const labels = serverData['date_labels'];
 const game_data = serverData['game_data'];
 
+
 for (let element in game_data) {
     // console.log(game_data[element])
     datum = game_data[element]
@@ -55,9 +59,11 @@ for (let element in game_data) {
 }
 
 if (labels.length > score_data.length) {
-    newDates = labels.slice(0,(score_data.length))
+    const newDates = labels.slice(0,(score_data.length))
     newDates.reverse()
 }
+
+console.log(newDates)
 
 // console.log(newDates)
 // console.log(score_data)

@@ -1,19 +1,36 @@
 {% extends 'base.html' %}
 
+{% block title %} Login {% endblock %}
+
 {% block login %}
 
-<h2>Please Log In</h2>
-<form action="/handle-login" method="POST">
-  <p>
-    Email <input type="text" name="email">
-  </p>
-  <p>
-    Password <input type="password" name="password">
-  </p>
-
-  <p>
-    <input type="submit">
-  </p>
-</form>
+<div class="container mt-4">
+  <div class="offset-8 mt-5">
+    <div class="col">
+      <h1 class="text-white">Please Log In</h1>
+      <form action="/handle-login" method="POST" class="text-white">
+        <p>
+          Email <input
+          type="text"
+          class="form-control"
+          id="basicTextInput"
+          name="email"
+        >
+        </p>
+        <p>
+          Password <input
+          type="text"
+          class="form-control"
+          id="basicTextInput"
+          name="password"
+        >
+        </p>
+        <p>
+          <input type="submit">
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
