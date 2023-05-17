@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300&display=swap');
+
 .center {
     margin-top: 30px;
     text-align: center;
@@ -7,6 +9,10 @@
 .footer {
     margin-top: 150px;
     color: white;
+}
+
+.navbar {
+    font-family: 'Hind Siliguri', sans-serif;
 }
 
 .text-left {
@@ -25,26 +31,48 @@
     transform: translateX(-50%) translateY(-50%);
     z-index: -1;
     color:white;
-  }
+}
+
+.container {
+    /* background-color: gray;
+    opacity: 50%; */
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.line-wipe {
+    position: relative;
+    text-decoration: none !important;
+    display: inline-block;
+}
+
+.line-wipe:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 0;
+    height: 100%;
+    border-bottom: 2px solid rgb(55, 170, 243);
+    transition: 0.5s width;
+}
+  
+.line-wipe:hover:after {
+    width: 100%;
+    border-bottom-color: rgb(0, 86, 179);
+}
 
 .text-white {
     color: white;
 }
 
+h1,
+h2,
+h3 {
+    text-decoration: underline;
+}
+
 img {
     max-width: 75%;
     max-height: 75%;
-}
-
-.container {
-    display: inline-block;
-  }
-
-.text-window {
-    background-image: url('form-bg.png');
-    background-repeat: no-repeat;
-    background-size: 690px;
-    background-position: center center;
 }
 
 .game-window {
@@ -59,8 +87,19 @@ img {
     color: white;
 }
   
+.custom-button-1 {
+    border: 1px solid limegreen;
+    border-radius: 0;
+    box-shadow: 2px 2px 0 purple;
+    background: white;
+  }
   
-  
+  .custom-button-1:hover {
+    background: black;
+    color: white;
+    box-shadow: 2px 2px 0 gray;
+  }
+
   
   
   

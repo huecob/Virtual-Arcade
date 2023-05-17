@@ -1,6 +1,6 @@
 updateButton = document.querySelector('.update-display-name');
 const user_id = updateButton.id
-// console.log(user_id) //this logged correctly
+// console.log(user_id) //this returned correctly
 
 fetch(`/user-metrics/${user_id}`) 
 .then((response) => response.json())
@@ -57,7 +57,7 @@ for (let dates in serverData) {
     scoreData.push(serverData[dates])
 }
 
-console.log(dateLabels, scoreData)
+
 
 const game1 = new Chart(
     document.querySelector('#game1-chart'),
@@ -88,7 +88,7 @@ fetch(`/game-2-user-metrics/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
 
-console.log(serverData)
+
 
 const dateLabels = [];
 const scoreData = [];
@@ -98,7 +98,7 @@ for (let dates in serverData) {
     scoreData.push(serverData[dates])
 }
 
-console.log(dateLabels, scoreData)
+
 
 const game2 = new Chart(
     document.querySelector('#game2-chart'),
@@ -129,8 +129,6 @@ fetch(`/game-3-user-metrics/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
 
-console.log(serverData)
-
 const dateLabels = [];
 const scoreData = [];
 
@@ -138,8 +136,6 @@ for (let dates in serverData) {
     dateLabels.push(dates)
     scoreData.push(serverData[dates])
 }
-
-console.log(dateLabels, scoreData)
 
 const game3 = new Chart(
     document.querySelector('#game3-chart'),
