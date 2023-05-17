@@ -1,7 +1,7 @@
 """CRUD Operations"""
 
 from model import db, User, GameSession, Game, GameDifficulty, Difficulties, connect_to_db
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from sqlalchemy import (and_, func)
 # from flask_sqlalchemy import SQLAlchemy
 import json
@@ -113,30 +113,27 @@ def seconds_played_ever(user_id):
 def last_7_days(user_id):
     """Find game session data from the last 7 days"""
 
-    retval = []
+    # retval = []
 
-    last_week = datetime.now() - timedelta(days=7)
+    last_week = date.today() - timedelta(days=7)
+    today = date.today()
 
     sessions = GameSession.query.filter(
         and_(
             GameSession.user_id == user_id,
-            GameSession.session_date >= last_week
+            GameSession.session_date >= last_week,
+            GameSession.session_date <= today
         )
     ).order_by(GameSession.session_date).all()
 
-    for session in sessions:
-        session_date = session.session_date
-
-        y = str(session_date.year)
-        mo = session_date.strftime('%B')
-        day = str(session_date.day)
-
-        session_date = f"{mo} {day}, {y}"
-        score = session.score
-
-        games_played = session.game_id
-
-        retval.append({'session_date': session_date, 'score': score, 'game_id': games_played})
+    retval = [
+        {
+            'session_date': session.session_date.strftime('%B %d, %Y'),
+            'score': session.score,
+            'game_id': session.game_id
+        }
+        for session in sessions
+    ]
 
     return retval #this is all the user session_data
 
@@ -174,3 +171,5 @@ if __name__ == "__main__":
     connect_to_db(app)
     app.app_context().push()
     
+
+[{'session_date': 'May 12, 2023', 'score': 0, 'game_id': 2}, {'session_date': 'May 12, 2023', 'score': 0, 'game_id': 2}, {'session_date': 'May 14, 2023', 'score': 1400, 'game_id': 2}, {'session_date': 'May 14, 2023', 'score': 600, 'game_id': 2}, {'session_date': 'May 14, 2023', 'score': 1500, 'game_id': 2}, {'session_date': 'May 14, 2023', 'score': 0, 'game_id': 2}, {'session_date': 'May 14, 2023', 'score': 200, 'game_id': 2}, {'session_date': 'July 22, 2023', 'score': 879, 'game_id': 3}, {'session_date': 'August 3, 2023', 'score': 733, 'game_id': 5}]

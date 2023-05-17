@@ -14,24 +14,46 @@
     {% endif %}
     {% endwith %}
 
-<h2>Sign up here:</h2>
-<form action="/register-user" method="POST">
-  <p>
-    Email <input type="text" name="email">
-  </p>
+<div class="container text-white mt-4">
+  <div class="col offset-6">
+    <div class="row">
+      <h2>Sign up here:</h2>
+      <form action="/register-user" method="POST">
+        <p>
+          E-mail<input
+                type="text"
+                class="form-control"
+                id="basicTextInput"
+                name="email"
+              >
+        </p>
 
-  <p>
-    Password <input type="password" name="password">
-  </p>
+        <p>
+          Password <input
+          type="text"
+          class="form-control"
+          id="basicTextInput"
+          name="password"
+        >
+        </p>
 
-  <p>
-    Display Name <input type="text" name="display name">
-  </p>
+        <p>
+          Display Name <input
+          type="text"
+          class="form-control"
+          id="basicTextInput"
+          name="display name"
+        >
+        </p>
 
-  <p>
-    <input type="submit">
-  </p>
-</form>
+        <p>
+          <input type="submit">
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
+
 <br>
 
 {% endblock %}

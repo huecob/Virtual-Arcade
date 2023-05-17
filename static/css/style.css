@@ -31,9 +31,21 @@
     color: white;
 }
 
+img {
+    max-width: 75%;
+    max-height: 75%;
+}
+
 .container {
     display: inline-block;
   }
+
+.text-window {
+    background-image: url('form-bg.png');
+    background-repeat: no-repeat;
+    background-size: 690px;
+    background-position: center center;
+}
 
 .game-window {
     display: block;

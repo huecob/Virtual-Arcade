@@ -211,57 +211,69 @@ def play_game3():
 def deliver_user_metrics(user_id):
     """Deliver metrics"""
 
+    retval = {}
+
     user_data = crud.last_7_days(user_id)
 
-    user = crud.get_users_by_id(user_id)
+    for data in user_data:
+        dates = data['session_date']
+        if dates not in retval:
+            retval[dates] = data['score']
+        elif retval[dates]:
+            retval[dates] += data['score'] 
 
-    display_name = user.user_display_name
+    return jsonify(retval)
 
-    # pass through as Chart.JS needs it
-    # make a list of the last 7 days 
-    # make a list of the last 7 score entries
-
-    date_labels = []
-    score_values = []
-        
-    for session in user_data:
-        #print(session) --> individual dicts, indexable
-        date_labels.append(session['session_date'])
-        score_values.append(session['score'])
-
-    return jsonify({"date_labels": date_labels, 
-                    "score_values": score_values, 
-                    "display_name": display_name,
-                    })
-
-@app.route('/specific-game-data/<user_id>')
-def deliver_game_specific_user_metrics(user_id):
+@app.route('/game-1-user-metrics/<user_id>')
+def deliver_game2_user_metrics(user_id):
     """Delivers a dictionary with values of game data organized game_ids as keys"""
 
-    data = crud.game_specific_user_data(user_id)
+    retval = {}
 
-    game_id_labels = [] #This is passed to AJAX call but not used quite yet.
-    specific_game_data = []
-    date_labels = []
+    user_data = crud.last_7_days(user_id)
 
-    for datum in data:
-        # print(f'the data***********: {datum}') => keys
-        game_id_labels.append(datum)
-        for game_data in data[datum]:
-            # print(f"HERE: ********** {game_data}") => values
-            specific_game_data.append(game_data)
+    for data in user_data:
+        dates = data['session_date']
+        if data['game_id'] == 2:
+            retval[dates] = data['score']
+        elif retval[dates] and data['game_id'] == 2:
+            retval[dates] += data['score']
 
-    today = datetime.now().date()
-    delta = timedelta(days=7)
+    return jsonify(retval)
 
-    for i in range(7):
-        date = today - timedelta(days=i)
-        date_str = date.strftime('%B %d, %Y')
-        date_labels.append(date_str)
+@app.route('/game-2-user-metrics/<user_id>')
+def deliver_game2_user_metrics(user_id):
+    """Delivers a dictionary with values of game data organized game_ids as keys"""
 
-    return jsonify({'game_id': game_id_labels,
-                    'game_data': specific_game_data,
-                    'date_labels': date_labels})
+    retval = {}
+
+    user_data = crud.last_7_days(user_id)
+
+    for data in user_data:
+        dates = data['session_date']
+        if data['game_id'] == 2:
+            retval[dates] = data['score']
+        elif retval[dates] and data['game_id'] == 2:
+            retval[dates] += data['score']
+
+    return jsonify(retval)
+
+@app.route('/game-3-user-metrics/<user_id>')
+def deliver_game3_user_metrics(user_id):
+    """Delivers a dictionary with values of game data organized game_ids as keys"""
+
+    retval = {}
+
+    user_data = crud.last_7_days(user_id)
+
+    for data in user_data:
+        dates = data['session_date']
+        if data['game_id'] == 3:
+            retval[dates] = data['score']
+        elif retval[dates] and data['game_id'] == 2:
+            retval[dates] += data['score']
+
+    return jsonify(retval)
 
 @app.route('/about-author')
 def show_about_me():

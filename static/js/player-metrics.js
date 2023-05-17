@@ -6,13 +6,15 @@ fetch(`/user-metrics/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
 
+const dateLabels = [];
 
-const username = serverData["display_name"]
-const labels = serverData["date_labels"]
-const scores = serverData["score_values"]
+const scoreData = [];
 
-// console.log(labels)
-// console.log(scores)
+for (let dates in serverData) {
+    dateLabels.push(dates)
+    scoreData.push(serverData[dates])
+}
+
 
 
 const totalChart = new Chart(
@@ -20,9 +22,9 @@ const totalChart = new Chart(
     {
         type: 'line',
         data: {
-            labels: labels,
+            labels: dateLabels,
             datasets: [
-                {data: scores}
+                {data: scoreData}
             ]
         },
         options: {
@@ -43,42 +45,30 @@ const totalChart = new Chart(
 // Since game 2 isn't live yet, we can't test if the obj we created in server.py (222)
 // I suggest to myself that we go back at some point and think of the best way to render these charts.
 
-fetch(`/specific-game-data/${user_id}`)
+fetch(`/game-1-user-metrics/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
 
-const score_data = [];
-const labels = serverData['date_labels'];
-const game_data = serverData['game_data'];
+console.log(serverData)
 
+const dateLabels = [];
+const scoreData = [];
 
-for (let element in game_data) {
-    // console.log(game_data[element])
-    datum = game_data[element]
-    score_data.push(datum['score'])
+for (let dates in serverData) {
+    dateLabels.push(dates)
+    scoreData.push(serverData[dates])
 }
 
-if (labels.length > score_data.length) {
-    const newDates = labels.slice(0,(score_data.length))
-    newDates.reverse()
-}
-
-console.log(newDates)
-
-// console.log(newDates)
-// console.log(score_data)
-// console.log(labels)
-// crop date label lengths to match the length of scores list
-
+console.log(dateLabels, scoreData)
 
 const ADChart = new Chart(
     document.querySelector('#ADChart'),
     {
         type: 'line',
         data: {
-            labels: newDates,
+            labels: dateLabels,
             datasets: [
-                {data: score_data}
+                {data: scoreData}
             ]
         },
         options: {
