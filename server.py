@@ -225,7 +225,7 @@ def deliver_user_metrics(user_id):
     return jsonify(retval)
 
 @app.route('/game-1-user-metrics/<user_id>')
-def deliver_game2_user_metrics(user_id):
+def deliver_game1_user_metrics(user_id):
     """Delivers a dictionary with values of game data organized game_ids as keys"""
 
     retval = {}
@@ -234,10 +234,14 @@ def deliver_game2_user_metrics(user_id):
 
     for data in user_data:
         dates = data['session_date']
-        if data['game_id'] == 2:
-            retval[dates] = data['score']
-        elif retval[dates] and data['game_id'] == 2:
-            retval[dates] += data['score']
+        if data['game_id'] == 1:
+            if dates not in retval:
+                retval[dates] = data['score']
+            else:
+                retval[dates] += data['score']
+
+    if not retval:
+        return jsonify({'No Data ):': "No Game Data"})
 
     return jsonify(retval)
 
@@ -252,9 +256,13 @@ def deliver_game2_user_metrics(user_id):
     for data in user_data:
         dates = data['session_date']
         if data['game_id'] == 2:
-            retval[dates] = data['score']
-        elif retval[dates] and data['game_id'] == 2:
-            retval[dates] += data['score']
+            if dates not in retval:
+                retval[dates] = data['score']
+            else:
+                retval[dates] += data['score']
+
+    if not retval:
+        return jsonify({'error-code': "No Game Data"})
 
     return jsonify(retval)
 
@@ -269,9 +277,13 @@ def deliver_game3_user_metrics(user_id):
     for data in user_data:
         dates = data['session_date']
         if data['game_id'] == 3:
-            retval[dates] = data['score']
-        elif retval[dates] and data['game_id'] == 2:
-            retval[dates] += data['score']
+            if dates not in retval:
+                retval[dates] = data['score']
+            else:
+                retval[dates] += data['score']
+
+    if not retval:
+        return jsonify({'error-code': "No Game Data"})
 
     return jsonify(retval)
 

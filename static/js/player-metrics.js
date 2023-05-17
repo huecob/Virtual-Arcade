@@ -40,12 +40,51 @@ const totalChart = new Chart(
             }
         }
     })
-})
-
-// Since game 2 isn't live yet, we can't test if the obj we created in server.py (222)
-// I suggest to myself that we go back at some point and think of the best way to render these charts.
+});
 
 fetch(`/game-1-user-metrics/${user_id}`)
+.then((response) => response.json())
+.then((serverData) => {
+
+(serverData['error-code'] ? 
+    document.querySelector.innerHTML = serverData['error-code]'] : null);
+
+const dateLabels = [];
+const scoreData = [];
+
+for (let dates in serverData) {
+    dateLabels.push(dates)
+    scoreData.push(serverData[dates])
+}
+
+console.log(dateLabels, scoreData)
+
+const game1 = new Chart(
+    document.querySelector('#game1-chart'),
+    {
+        type: 'line',
+        data: {
+            labels: dateLabels,
+            datasets: [
+                {data: scoreData}
+            ]
+        },
+        options: {
+            responsive: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Artificial Dunderhead",
+                    position: "top",
+                    align: "start",
+                    padding: 20
+                }
+            }
+        }
+    })
+});
+
+fetch(`/game-2-user-metrics/${user_id}`)
 .then((response) => response.json())
 .then((serverData) => {
 
@@ -61,8 +100,8 @@ for (let dates in serverData) {
 
 console.log(dateLabels, scoreData)
 
-const ADChart = new Chart(
-    document.querySelector('#ADChart'),
+const game2 = new Chart(
+    document.querySelector('#game2-chart'),
     {
         type: 'line',
         data: {
@@ -76,7 +115,48 @@ const ADChart = new Chart(
             plugins: {
                 title: {
                     display: true,
-                    text: "A.D. SCORE DATA",
+                    text: "Sundown till Sunrise",
+                    position: "top",
+                    align: "start",
+                    padding: 20
+                }
+            }
+        }
+    })
+});
+
+fetch(`/game-3-user-metrics/${user_id}`)
+.then((response) => response.json())
+.then((serverData) => {
+
+console.log(serverData)
+
+const dateLabels = [];
+const scoreData = [];
+
+for (let dates in serverData) {
+    dateLabels.push(dates)
+    scoreData.push(serverData[dates])
+}
+
+console.log(dateLabels, scoreData)
+
+const game3 = new Chart(
+    document.querySelector('#game3-chart'),
+    {
+        type: 'line',
+        data: {
+            labels: dateLabels,
+            datasets: [
+                {data: scoreData}
+            ]
+        },
+        options: {
+            responsive: false,
+            plugins: {
+                title: {
+                    display: true,
+                    text: "Responsibility Rain",
                     position: "top",
                     align: "start",
                     padding: 20
@@ -85,5 +165,3 @@ const ADChart = new Chart(
         }
     })
 })
-
-
