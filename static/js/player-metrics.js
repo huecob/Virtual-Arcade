@@ -24,7 +24,8 @@ const totalChart = new Chart(
         data: {
             labels: dateLabels,
             datasets: [
-                {data: scoreData}
+                {data: scoreData,
+                label: "ALL SCORES",}
             ]
         },
         options: {
@@ -66,7 +67,8 @@ const game1 = new Chart(
         data: {
             labels: dateLabels,
             datasets: [
-                {data: scoreData}
+                {data: scoreData,
+                label: 'Total Points'}
             ]
         },
         options: {
@@ -107,7 +109,8 @@ const game2 = new Chart(
         data: {
             labels: dateLabels,
             datasets: [
-                {data: scoreData}
+                {data: scoreData,
+                label: "Total Points"}
             ]
         },
         options: {
@@ -144,7 +147,9 @@ const game3 = new Chart(
         data: {
             labels: dateLabels,
             datasets: [
-                {data: scoreData}
+                {data: scoreData,
+                label: "Total Points",
+                hoverBackgroundColor: '#FFFFFF'}
             ]
         },
         options: {

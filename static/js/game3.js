@@ -249,6 +249,8 @@ for (let row = 0; row < 5; row++) {
   }
 };
 
+const responsibilitySpeed = 120;
+
 function destroyRandomTile() {
     const tiles = get("tile");
 
@@ -260,8 +262,6 @@ function destroyRandomTile() {
 
     destroy(randomTile);
 }
-
-const responsibilitySpeed = 120;
 
 function spawnResponsibilities() {
     add([

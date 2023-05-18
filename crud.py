@@ -116,13 +116,13 @@ def last_7_days(user_id):
     # retval = []
 
     last_week = date.today() - timedelta(days=7)
-    today = date.today()
+    date_gap = date.today() + timedelta(days=4)
 
     sessions = GameSession.query.filter(
         and_(
             GameSession.user_id == user_id,
             GameSession.session_date >= last_week,
-            GameSession.session_date <= today
+            GameSession.session_date <= date_gap
         )
     ).order_by(GameSession.session_date).all()
 

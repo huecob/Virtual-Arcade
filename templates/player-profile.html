@@ -5,36 +5,37 @@
 {% block profile %}
 
 <div>
-    <h1 id="new-name">{{ user.user_display_name }}'s Profile!</h1>
+    <h1 id="new-name" class="text-white">{{ user.user_display_name }}'s Profile!</h1>
 </div> 
 <br>
-<div id="user-high-score">HIGHEST SCORE: {{ score }}</div><br>
-Update Display Name: 
-<button class="update-display-name" id={{ user.user_id }}> Edit Name </button>
+<div class="text-white" style="margin-left: 10px" id="user-high-score">HIGHEST SCORE: {{ score }}</div><br>
+<div class='text-white' style="margin-left: 10px">Update Display Name: 
+</div>
+<button class="update-display-name text-white" style="margin-left: 10px" id={{ user.user_id }}> Edit Name </button><br><br>
 <span class=display_name_{{ user.user_id }}> </span>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
-<div class="container align-items-center">
+<div class="container align-items-center" style="background-color: black; opacity: 75%;">
     <div class="row offset-3">
         <div class="col-6">
-            <canvas id="totals-chart" width="600" height="400"></canvas>
+            <canvas style="padding: 10px;" id="totals-chart" width="600" height="400"></canvas>
         </div>
     </div>
 </div>
 
-<div class="container">
+<div class="container" style="background-color: black; opacity: 75%;">
     <div class="row">
         <div class="col-4">
-            <canvas id="game1-chart" width="350" height="300"></canvas>
+            <canvas style="padding: 10px;" id="game1-chart" width="350" height="300"></canvas>
         </div>
         <div class="col-4">
-            <canvas id="game2-chart" width="350" height="300"></canvas>
+            <canvas style="padding: 10px;" id="game2-chart" width="350" height="300"></canvas>
         </div>
         <div class="col-4">
-            <canvas id="game3-chart" width="350" height="300"></canvas>
+            <canvas style="padding: 10px;" id="game3-chart" width="350" height="300"></canvas>
         </div>
     </div>
 </div>
