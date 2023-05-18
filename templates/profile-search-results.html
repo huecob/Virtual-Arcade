@@ -4,13 +4,27 @@
 
 {% block searchResults %}
 
-<h1>Profile Search Results:</h1>
+<div class="container mt-4" style="background-color: black;">
+   <div class="row">
+      <div class="col-10">
+         <h1 class="text-white">Profile Search Results:</h1>
+      </div>
+   </div>
+</div>
 
-{% for users in user_data %}
-<ul>
-   <a href="/player-profile/{{ users[1] }}"> {{ users[0] }} </a>
-</ul>
-{% endfor %}
+
+<div class="container" style="background-color: black;">
+   <div class="row">
+      <div class="col offset">
+         {% for users in user_data %}
+         <ul class="text-white">
+            <a href="/player-profile/{{ users[1] }}"> {{ users[0] }} </a>
+         </ul>
+         {% endfor %}
+      </div>
+   </div>
+</div>
+
 
 
 {% endblock %}
