@@ -11,6 +11,11 @@
     color: white;
 }
 
+.text-window {
+    height: 200px;
+    background: linear-gradient(#fff6e6, #ffc9e4, #fcc5e8);
+}
+
 .navbar {
     font-family: 'Hind Siliguri', sans-serif;
 }
