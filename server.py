@@ -98,7 +98,11 @@ def create_user():
         db.session.add(user)
         db.session.commit()
 
-        # you need to add in session key value
+        user = crud.get_user_by_email(email)
+        user_id = user.user_id
+
+        session['user_id'] = user_id
+        session['email'] = email
 
         return redirect('/')
 

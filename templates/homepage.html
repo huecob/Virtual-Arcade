@@ -14,24 +14,7 @@
     {% endif %}
     {% endwith %}
 
-
-    <!-- <div class="center"></div> -->
-
-  <div class="container text-white window-bg">
-    <div class="row text-center">
-      <div class="col">
-      REIGNING CHAMPION: {{user_name}} with a score of {{highest_score.score}}
-      </div>
-    </div>
-  </div>
-
-  <marquee>
-    <div class="text-white">
-      Friendly Tip: {{ friendly_tip }}
-    </div>
-  </marquee>
-
-<div class="container text-white text-window mt-5">
+<div class="container text-window mt-5">
   <div class="row">
     <div class="col text-center mt-2">
         <h1>Getting Started</h1>
@@ -41,21 +24,23 @@
   <div class="row">
     <div class="col offset-2"">
         <li>
-          Step 1: If you haven't already, register to create an account in the navbar above. <br>
+          Step 1: If you haven't already, register to create an account or log into your account in the navbar above. <br>
       </li>
       <li>
           Step 2: The navbar should now look different! Click on 'Profile' to access your account. <br>
       </li>
       <li>
-          Step 3: When you're ready and logged in, click 'Games' and choose! <br>
+          Step 3: When you're ready and logged in, click 'Games' and choose! Have fun! <br>
       </li><br>
     </div>
+  </div>
+</div>
 
-      <div class="row offset-1">
-      <div class="col text-center">
-          <b>Have fun!</b>
-      </div>
-      </div>
+<div class="container text-center high-score-window mt-3">
+  <div class="row">
+    <div class="col">
+        REIGNING CHAMPION: {{user_name}} with a score of {{highest_score.score}}!!
+    </div>
   </div>
 </div>
 

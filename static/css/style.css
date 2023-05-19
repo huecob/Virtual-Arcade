@@ -12,17 +12,86 @@
 }
 
 .text-window {
-    height: 200px;
-    background: linear-gradient(#fff6e6, #ffc9e4, #fcc5e8);
+    height: 275px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 800px;
+}
+
+.login-window {
+    height: 400px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 900px;
+    /* margin-top:100px; */
+}
+
+.profile-window {
+    height: 450px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 900px;
+    /* margin-top:100px; */
+}
+
+.registration-window {
+    height: 450px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 800px;
+    /* margin-top:100px; */
+}
+
+.charts-window {
+    height: 1000px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 1100px;
+    /* margin-top:100px; */
+}
+
+.high-score-window {
+    height: 70px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 600px;
+    /* margin-top:100px; */
+}
+
+canvas {
+    justify-content: center;
+    align-items: center;
 }
 
 .navbar {
     font-family: 'Hind Siliguri', sans-serif;
+    border-right: 1px ridge #000;
+    padding-right: 10px;
 }
 
 .text-left {
     margin-left: 430px;
     color: white;
+}
+
+#navbar-margin {
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 10px;
+    border-radius: 25px;
+    padding: 20px; 
 }
 
 #bgvid {
@@ -82,8 +151,7 @@ img {
 }
 
 .game-window {
-    display: block;
-    max-width: 800px;
+    position: absolute;
 }
 
 .game-summary {

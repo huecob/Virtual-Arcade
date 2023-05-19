@@ -165,4 +165,16 @@ const game3 = new Chart(
             }
         }
     })
-})
+});
+
+const game1ChartButton = document.querySelector('#game1-chartbutton')
+const game2ChartButton = document.querySelector('#game2-chartbutton')
+const game3ChartButton = document.querySelector('#game3-chartbutton')
+
+const buttons = [game1ChartButton,game2ChartButton,game3ChartButton];
+
+for (let i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', () => {
+        
+    })
+}
