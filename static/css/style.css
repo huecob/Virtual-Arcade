@@ -20,6 +20,15 @@
     width: 800px;
 }
 
+.search-window {
+    height: 650px;
+    background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);
+    border-radius: 25px;
+    padding: 20px; 
+    opacity: 90%;
+    width: 800px;
+}
+
 .login-window {
     height: 400px;
     background: linear-gradient(#DAC6FF, #E6D9FF, #F3EBFF);

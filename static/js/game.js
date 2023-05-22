@@ -130,7 +130,9 @@ scene("game", () => {
 	// 	music.pause();
 	// }) 
 
-	const music = play("gamemusic")
+	const music = play("gamemusic", {
+		volume: 0.5
+	})
 	music.loop();
 
 	layers(["bg","obj", "ui"], "obj");
